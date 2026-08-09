@@ -32,7 +32,7 @@ function AppRoutes() {
           <Route path="/users" element={<Users />} />
           <Route path="/transactions/:id" element={<TransactionDetail />} />
         </Route>
-      </Routes>
+      </Routes>  
     </BrowserRouter>
   );
 }
