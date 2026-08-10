@@ -1,18 +1,24 @@
 import { useEffect, useState } from "react";
 
-import { getCategories } from "../../services/categoryService";
-import { getSuppliers } from "../../services/supplierService";
 import {
   getProductById,
   createProduct,
   updateProduct,
 } from "../../services/productService";
 
-function FormProducts({ mode, productId, onClose, onSuccess }) {
+function FormProducts({
+  mode,
+  productId,
+  categories = [],
+  suppliers = [],
+  onClose,
+  onSuccess,
+}) {
   // mode: "add" | "edit" | "view"
-
-  const [categories, setCategories] = useState([]);
-  const [suppliers, setSuppliers] = useState([]);
+  // categories / suppliers are passed down from Products.jsx,
+  // which loads them once on mount — this component no longer
+  // fetches them itself, so opening the modal doesn't refire
+  // those requests every time.
 
   const [formData, setFormData] = useState({
     productCode: "",
@@ -76,34 +82,14 @@ function FormProducts({ mode, productId, onClose, onSuccess }) {
       }
 
       // ------------------------------------------
-      // ADD / EDIT MODE
-      // ------------------------------------------
-
-      const requests = [getCategories(), getSuppliers()];
-
-      if (isEdit) {
-        requests.push(getProductById(productId));
-      }
-
-      const responses = await Promise.all(requests);
-
-      const categoryResponse = responses[0];
-      const supplierResponse = responses[1];
-      const productResponse = isEdit ? responses[2] : null;
-
-      if (categoryResponse.data.success) {
-        setCategories(categoryResponse.data.data);
-      }
-
-      if (supplierResponse.data.success) {
-        setSuppliers(supplierResponse.data.data);
-      }
-
-      // ------------------------------------------
       // EDIT MODE
+      // Only the product record itself needs fetching —
+      // categories/suppliers already arrived as props.
       // ------------------------------------------
 
       if (isEdit) {
+        const productResponse = await getProductById(productId);
+
         if (!productResponse.data.success) {
           setError(
             productResponse.data.message ||
@@ -115,24 +101,20 @@ function FormProducts({ mode, productId, onClose, onSuccess }) {
         const product = productResponse.data.data;
 
         // Find existing category
-        const selectedCategory =
-          categoryResponse.data.data.find(
-            (category) =>
-              String(category.categoryId) ===
-                String(product.categoryId) ||
-              category.categoryName ===
-                product.categoryName
-          );
+        const selectedCategory = categories.find(
+          (category) =>
+            String(category.categoryId) ===
+              String(product.categoryId) ||
+            category.categoryName === product.categoryName
+        );
 
         // Find existing supplier
-        const selectedSupplier =
-          supplierResponse.data.data.find(
-            (supplier) =>
-              String(supplier.supplierId) ===
-                String(product.supplierId) ||
-              supplier.supplierName ===
-                product.supplierName
-          );
+        const selectedSupplier = suppliers.find(
+          (supplier) =>
+            String(supplier.supplierId) ===
+              String(product.supplierId) ||
+            supplier.supplierName === product.supplierName
+        );
 
         setFormData({
           productCode: product.productCode || "",
@@ -151,26 +133,28 @@ function FormProducts({ mode, productId, onClose, onSuccess }) {
           sellingPrice: product.sellingPrice ?? "",
           reorderLevel: product.reorderLevel ?? "",
         });
+
+        return;
       }
 
       // ------------------------------------------
       // ADD MODE
+      // Nothing to fetch — categories/suppliers are
+      // already available via props.
       // ------------------------------------------
 
-      else {
-        setFormData({
-          productCode: "",
-          productName: "",
-          categoryId: "",
-          supplierId: "",
-          unit: "",
-          purchasePrice: "",
-          sellingPrice: "",
-          reorderLevel: "",
-        });
+      setFormData({
+        productCode: "",
+        productName: "",
+        categoryId: "",
+        supplierId: "",
+        unit: "",
+        purchasePrice: "",
+        sellingPrice: "",
+        reorderLevel: "",
+      });
 
-        setFieldErrors({});
-      }
+      setFieldErrors({});
     } catch (error) {
       console.error("Error loading data:", error);
 

@@ -8,6 +8,7 @@ import {
 } from "../../services/productService";
 
 import { getCategories } from "../../services/categoryService";
+import { getSuppliers } from "../../services/supplierService";
 
 import ConfirmDialog from "../../components/common/ConfirmDialog";
 import FormProducts from "./FormProducts";
@@ -27,10 +28,14 @@ function Products() {
   const [categoryId, setCategoryId] = useState("");
 
   // --------------------------------------------------
-  // Categories
+  // Categories / Suppliers
+  // Loaded once here and shared with the Add/Edit/View
+  // modal via props, instead of FormProducts re-fetching
+  // them on every open.
   // --------------------------------------------------
 
   const [categories, setCategories] = useState([]);
+  const [suppliers, setSuppliers] = useState([]);
 
   // --------------------------------------------------
   // Loading and Messages
@@ -72,11 +77,12 @@ function Products() {
     useState(false);
 
   // ==================================================
-  // LOAD CATEGORIES
+  // LOAD CATEGORIES + SUPPLIERS (once)
   // ==================================================
 
   useEffect(() => {
     loadCategories();
+    loadSuppliers();
   }, []);
 
   // ==================================================
@@ -105,6 +111,25 @@ function Products() {
     } catch (error) {
       console.error(
         "Error loading categories:",
+        error
+      );
+    }
+  };
+
+  // ==================================================
+  // GET SUPPLIERS
+  // ==================================================
+
+  const loadSuppliers = async () => {
+    try {
+      const response = await getSuppliers();
+
+      if (response.data.success) {
+        setSuppliers(response.data.data);
+      }
+    } catch (error) {
+      console.error(
+        "Error loading suppliers:",
         error
       );
     }
@@ -765,6 +790,8 @@ function Products() {
         <FormProducts
           mode={modalMode}
           productId={selectedProductId}
+          categories={categories}
+          suppliers={suppliers}
           onClose={closeModal}
           onSuccess={handleFormSuccess}
         />

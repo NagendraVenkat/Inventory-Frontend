@@ -3,13 +3,16 @@ function Sidebar() {
     <div
       style={{
         width: "250px",
+        minWidth: "250px",
+        flexShrink: 0,
         minHeight: "100vh",
         backgroundColor: "#18353A",
         color: "white",
         padding: "20px",
+        boxSizing: "border-box",
       }}
     >
-      <h4>Inventory Manager</h4>
+      <h2>Inventory Manager</h2>
 
       <hr />
 
