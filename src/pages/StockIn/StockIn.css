@@ -1,0 +1,860 @@
+/* =========================================================
+   STOCK IN PAGE
+========================================================= */
+
+.stockin-page {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* =========================================================
+   MAIN CARD
+========================================================= */
+
+.stockin-card {
+  width: 100%;
+
+  background-color: var(--white);
+
+  border: 1px solid var(--border);
+  border-radius: 10px;
+
+  box-shadow: 0 2px 6px rgba(28, 43, 42, 0.06);
+
+  overflow: hidden;
+}
+
+/* =========================================================
+   CARD HEADER
+========================================================= */
+
+.stockin-card-header {
+  padding: 22px 24px 8px;
+}
+
+.stockin-card-header h2 {
+  margin: 0;
+
+  color: var(--text);
+
+  font-size: 18px;
+  font-weight: 600;
+
+  line-height: 1.4;
+}
+
+/* =========================================================
+   BASIC INFORMATION
+========================================================= */
+
+.stockin-basic-info {
+  display: grid;
+
+  grid-template-columns:
+    1.15fr
+    1.15fr
+    1fr;
+
+  gap: 18px;
+
+  padding: 0 24px 18px;
+}
+
+/* =========================================================
+   FORM FIELD
+========================================================= */
+
+.stockin-field {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+}
+
+.stockin-field label {
+  color: var(--text-secondary);
+
+  font-size: 13px;
+  font-weight: 500;
+
+  line-height: 1.3;
+}
+
+.stockin-field label span {
+  color: var(--danger);
+}
+
+/* =========================================================
+   INPUTS / SELECT
+========================================================= */
+
+.stockin-field input,
+.stockin-field select {
+  width: 100%;
+
+  height: 46px;
+
+  padding: 0 14px;
+
+  border: 1px solid var(--border);
+  border-radius: 7px;
+
+  background-color: var(--white);
+
+  color: var(--text);
+
+  font-family: inherit;
+  font-size: 14px;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.stockin-field input:focus,
+.stockin-field select:focus {
+  border-color: var(--primary);
+
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.08);
+}
+
+.stockin-field input::placeholder {
+  color: #9aa7a5;
+}
+
+/* =========================================================
+   TABLE WRAPPER
+========================================================= */
+
+.stockin-table-wrapper {
+  width: 100%;
+
+  padding: 0 24px;
+
+  overflow-x: auto;
+
+  scrollbar-width: thin;
+}
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.stockin-table {
+  width: 100%;
+
+  min-width: 760px;
+
+  border-collapse: collapse;
+
+  table-layout: fixed;
+}
+
+/* =========================================================
+   COLUMN WIDTHS
+========================================================= */
+
+.stockin-product-column {
+  width: 36%;
+}
+
+.stockin-quantity-column {
+  width: 13%;
+}
+
+.stockin-price-column {
+  width: 20%;
+}
+
+.stockin-total-column {
+  width: 23%;
+}
+
+.stockin-action-column {
+  width: 8%;
+}
+
+/* =========================================================
+   TABLE HEADER
+========================================================= */
+
+.stockin-table thead th {
+  height: 44px;
+
+  padding: 0 15px;
+
+  background-color: #f8faf9;
+
+  border-top: 1px solid #f1f4f3;
+  border-bottom: 1px solid var(--border);
+
+  color: var(--text-secondary);
+
+  font-family: var(--font-mono);
+
+  font-size: 11px;
+  font-weight: 600;
+
+  letter-spacing: 0.6px;
+
+  white-space: nowrap;
+
+  text-align: left;
+}
+
+.stockin-table thead th:first-child {
+  padding-left: 15px;
+}
+
+.stockin-table .center-header {
+  text-align: center;
+}
+
+.stockin-table .right-header {
+  text-align: right;
+}
+
+/* =========================================================
+   TABLE BODY
+========================================================= */
+
+.stockin-table tbody td {
+  height: 72px;
+
+  padding: 10px 15px;
+
+  border-bottom: 1px solid #edf1f0;
+
+  color: var(--text);
+
+  font-size: 14px;
+
+  vertical-align: middle;
+}
+
+/* =========================================================
+   PRODUCT SELECT
+========================================================= */
+
+.stockin-product-select {
+  width: 100%;
+
+  height: 46px;
+
+  padding: 0 36px 0 14px;
+
+  border: 1px solid var(--border);
+  border-radius: 7px;
+
+  background-color: var(--white);
+
+  color: var(--text);
+
+  font-family: inherit;
+  font-size: 14px;
+
+  outline: none;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.stockin-product-select:focus {
+  border-color: var(--primary);
+
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.08);
+}
+
+/* =========================================================
+   NUMBER INPUTS
+========================================================= */
+
+.stockin-number-input {
+  width: 100%;
+
+  height: 44px;
+
+  padding: 0 12px;
+
+  border: 1px solid var(--border);
+  border-radius: 7px;
+
+  background-color: var(--white);
+
+  color: var(--text);
+
+  font-family: var(--font-mono);
+  font-size: 13px;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.stockin-number-input:focus {
+  border-color: var(--primary);
+
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.08);
+}
+
+/* Remove browser number arrows */
+
+.stockin-number-input::-webkit-inner-spin-button,
+.stockin-number-input::-webkit-outer-spin-button {
+  margin: 0;
+}
+
+/* =========================================================
+   QUANTITY
+========================================================= */
+
+.quantity-input {
+  text-align: center;
+}
+
+/* =========================================================
+   PRICE
+========================================================= */
+
+.price-input {
+  text-align: right;
+}
+
+/* =========================================================
+   LINE TOTAL
+========================================================= */
+
+.line-total-cell {
+  text-align: right;
+
+  white-space: nowrap;
+}
+
+.line-total-cell .mono-text {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* =========================================================
+   MONOSPACE
+========================================================= */
+
+.mono-text {
+  font-family: var(--font-mono);
+}
+
+/* =========================================================
+   REMOVE BUTTON
+========================================================= */
+
+.action-cell {
+  text-align: center;
+
+  padding-left: 8px !important;
+  padding-right: 8px !important;
+}
+
+.remove-row-button {
+  width: 40px;
+  height: 40px;
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #f4caca;
+
+  border-radius: 7px;
+
+  background-color: var(--white);
+
+  color: #dc2626;
+
+  font-size: 16px;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.15s ease;
+}
+
+.remove-row-button:hover {
+  background-color: #fef2f2;
+
+  border-color: #f0aaaa;
+
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   TABLE FOOTER
+========================================================= */
+
+.stockin-table tfoot td {
+  height: 50px;
+
+  padding: 0 15px;
+
+  background-color: #f8faf9;
+
+  border-bottom: 1px solid #eef2f1;
+
+  color: var(--text);
+
+  font-size: 14px;
+
+  font-weight: 600;
+}
+
+/* =========================================================
+   GRAND TOTAL
+========================================================= */
+
+.grand-total-label {
+  text-align: left;
+}
+
+.grand-total-quantity {
+  text-align: center;
+
+  font-family: var(--font-mono);
+}
+
+.grand-total-amount {
+  text-align: right;
+
+  font-family: var(--font-mono);
+
+  font-size: 14px;
+}
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.stockin-actions {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  padding: 20px 24px 22px;
+}
+
+/* =========================================================
+   ADD ROW
+========================================================= */
+
+.add-row-button {
+  min-height: 44px;
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 0 16px;
+
+  border: 1px solid var(--border);
+  border-radius: 7px;
+
+  background-color: var(--white);
+
+  color: var(--text);
+
+  font-family: inherit;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.add-row-button span {
+  font-size: 18px;
+
+  line-height: 1;
+}
+
+.add-row-button:hover {
+  background-color: #f8faf9;
+
+  border-color: #cbd8d5;
+}
+
+/* =========================================================
+   RIGHT ACTIONS
+========================================================= */
+
+.stockin-right-actions {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+}
+
+/* =========================================================
+   CANCEL
+========================================================= */
+
+.cancel-button {
+  min-height: 44px;
+
+  padding: 0 20px;
+
+  border: 1px solid var(--border);
+  border-radius: 7px;
+
+  background-color: var(--white);
+
+  color: var(--text);
+
+  font-family: inherit;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.cancel-button:hover {
+  background-color: #f8faf9;
+
+  border-color: #cbd8d5;
+}
+
+/* =========================================================
+   SAVE BUTTON
+========================================================= */
+
+.save-stockin-button {
+  min-height: 44px;
+
+  padding: 0 20px;
+
+  border: 1px solid var(--primary);
+  border-radius: 7px;
+
+  background-color: var(--primary);
+
+  color: #ffffff;
+
+  font-family: inherit;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.15s ease;
+}
+
+.save-stockin-button:hover {
+  background-color: #0f766e;
+
+  border-color: #0f766e;
+
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1000px) {
+  .stockin-basic-info {
+    grid-template-columns:
+      1fr
+      1fr;
+  }
+
+  .stockin-field:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+/* =========================================================
+   SMALL TABLET
+========================================================= */
+
+@media (max-width: 750px) {
+  .stockin-card-header {
+    padding: 20px 18px 8px;
+  }
+
+  .stockin-basic-info {
+    grid-template-columns: 1fr;
+
+    padding: 0 18px 18px;
+  }
+
+  .stockin-field:last-child {
+    grid-column: auto;
+  }
+
+  .stockin-table-wrapper {
+    padding: 0 18px;
+  }
+
+  .stockin-actions {
+    padding: 18px;
+
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+
+  .add-row-button {
+    width: 100%;
+  }
+
+  .stockin-right-actions {
+    width: 100%;
+  }
+
+  .cancel-button,
+  .save-stockin-button {
+    flex: 1;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 520px) {
+  .stockin-card {
+    border-radius: 8px;
+  }
+
+  .stockin-card-header {
+    padding: 18px 16px 8px;
+  }
+
+  .stockin-card-header h2 {
+    font-size: 17px;
+  }
+
+  .stockin-basic-info {
+    padding: 0 16px 16px;
+
+    gap: 14px;
+  }
+
+  .stockin-field input,
+  .stockin-field select {
+    height: 44px;
+
+    font-size: 13px;
+  }
+
+  .stockin-table-wrapper {
+    padding: 0 16px;
+
+    overflow-x: auto;
+  }
+
+  .stockin-table {
+    min-width: 720px;
+  }
+
+  .stockin-table thead th {
+    height: 42px;
+
+    padding: 0 12px;
+
+    font-size: 10px;
+  }
+
+  .stockin-table tbody td {
+    height: 68px;
+
+    padding: 9px 12px;
+
+    font-size: 13px;
+  }
+
+  .stockin-product-select {
+    height: 42px;
+
+    font-size: 13px;
+  }
+
+  .stockin-number-input {
+    height: 42px;
+
+    font-size: 12px;
+  }
+
+  .remove-row-button {
+    width: 38px;
+    height: 38px;
+  }
+
+  .stockin-table tfoot td {
+    height: 48px;
+
+    padding: 0 12px;
+
+    font-size: 13px;
+  }
+
+  .stockin-actions {
+    padding: 16px;
+  }
+}
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media (max-width: 380px) {
+  .stockin-card-header h2 {
+    font-size: 16px;
+  }
+
+  .stockin-field label {
+    font-size: 12px;
+  }
+
+  .stockin-right-actions {
+    flex-direction: column;
+  }
+
+  .cancel-button,
+  .save-stockin-button {
+    width: 100%;
+  }
+}
+/* =========================================================
+   REMARKS
+========================================================= */
+
+.stockin-remarks {
+  padding: 18px 24px 0;
+}
+
+.stockin-remarks textarea {
+  width: 100%;
+  min-height: 80px;
+
+  padding: 12px 14px;
+
+  border: 1px solid var(--border);
+  border-radius: 7px;
+
+  background-color: var(--white);
+  color: var(--text);
+
+  font-family: inherit;
+  font-size: 14px;
+
+  resize: vertical;
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.stockin-remarks textarea:focus {
+  border-color: var(--primary);
+
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.08);
+}
+
+.stockin-remarks textarea::placeholder {
+  color: #9aa7a5;
+}
+
+/* =========================================================
+   MESSAGES
+========================================================= */
+
+.stockin-message {
+  margin: 0 24px 18px;
+
+  padding: 11px 14px;
+
+  border-radius: 7px;
+
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.stockin-error {
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+}
+
+.stockin-success {
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #15803d;
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.stockin-loading {
+  min-height: 180px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  color: var(--text-secondary);
+
+  font-size: 14px;
+}
+
+/* =========================================================
+   DISABLED
+========================================================= */
+
+.remove-row-button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+
+  transform: none;
+}
+
+.cancel-button:disabled,
+.save-stockin-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+
+  transform: none;
+}

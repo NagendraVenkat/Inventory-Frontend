@@ -1,0 +1,856 @@
+/* =========================================================
+   STOCK OUT PAGE
+========================================================= */
+
+.stockout-page {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* =========================================================
+   MAIN CARD
+========================================================= */
+
+.stockout-card {
+  width: 100%;
+
+  background-color: var(--white);
+
+  border: 1px solid var(--border);
+  border-radius: 10px;
+
+  box-shadow: 0 2px 6px rgba(28, 43, 42, 0.06);
+
+  overflow: hidden;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.stockout-card-header {
+  padding: 22px 24px 8px;
+}
+
+.stockout-card-header h2 {
+  margin: 0;
+
+  color: var(--text);
+
+  font-size: 18px;
+  font-weight: 600;
+
+  line-height: 1.4;
+}
+
+.stockout-card-header p {
+  margin: 4px 0 0;
+
+  color: var(--text-secondary);
+
+  font-size: 13px;
+}
+
+/* =========================================================
+   MESSAGES
+========================================================= */
+
+.stockout-message {
+  margin: 0 24px 14px;
+
+  padding: 11px 14px;
+
+  border-radius: 7px;
+
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.stockout-error {
+  background-color: #fef2f2;
+
+  border: 1px solid #fecaca;
+
+  color: #b91c1c;
+}
+
+.stockout-success {
+  background-color: #ecfdf5;
+
+  border: 1px solid #a7f3d0;
+
+  color: #047857;
+}
+
+/* =========================================================
+   BASIC INFORMATION
+========================================================= */
+
+.stockout-basic-info {
+  display: grid;
+
+  grid-template-columns:
+    1.15fr
+    1fr
+    1.15fr;
+
+  gap: 18px;
+
+  padding: 0 24px 18px;
+}
+
+/* =========================================================
+   FORM FIELD
+========================================================= */
+
+.stockout-field {
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 7px;
+}
+
+.stockout-field label {
+  color: var(--text-secondary);
+
+  font-size: 13px;
+  font-weight: 500;
+
+  line-height: 1.3;
+}
+
+.stockout-field label span {
+  color: var(--danger);
+}
+
+/* =========================================================
+   INPUT
+========================================================= */
+
+.stockout-field input {
+  width: 100%;
+
+  height: 46px;
+
+  padding: 0 14px;
+
+  border: 1px solid var(--border);
+  border-radius: 7px;
+
+  background-color: var(--white);
+
+  color: var(--text);
+
+  font-family: inherit;
+  font-size: 14px;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.stockout-field input:focus {
+  border-color: var(--primary);
+
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.08);
+}
+
+.stockout-field input::placeholder {
+  color: #9aa7a5;
+}
+
+/* =========================================================
+   TABLE WRAPPER
+========================================================= */
+
+.stockout-table-wrapper {
+  width: 100%;
+
+  padding: 0 24px;
+
+  overflow-x: auto;
+
+  scrollbar-width: thin;
+}
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.stockout-table {
+  width: 100%;
+
+  min-width: 900px;
+
+  border-collapse: collapse;
+
+  table-layout: fixed;
+}
+
+/* =========================================================
+   COLUMN WIDTHS
+========================================================= */
+
+.stockout-product-column {
+  width: 31%;
+}
+
+.stockout-available-column {
+  width: 11%;
+}
+
+.stockout-quantity-column {
+  width: 13%;
+}
+
+.stockout-price-column {
+  width: 15%;
+}
+
+.stockout-total-column {
+  width: 20%;
+}
+
+.stockout-action-column {
+  width: 10%;
+}
+
+/* =========================================================
+   TABLE HEADER
+========================================================= */
+
+.stockout-table thead th {
+  height: 44px;
+
+  padding: 0 15px;
+
+  background-color: #f8faf9;
+
+  border-top: 1px solid #f1f4f3;
+  border-bottom: 1px solid var(--border);
+
+  color: var(--text-secondary);
+
+  font-family: var(--font-mono);
+
+  font-size: 11px;
+  font-weight: 600;
+
+  letter-spacing: 0.6px;
+
+  white-space: nowrap;
+
+  text-align: left;
+}
+
+.stockout-table .center-header {
+  text-align: center;
+}
+
+.stockout-table .right-header {
+  text-align: right;
+}
+
+/* =========================================================
+   TABLE BODY
+========================================================= */
+
+.stockout-table tbody td {
+  height: 72px;
+
+  padding: 10px 15px;
+
+  border-bottom: 1px solid #edf1f0;
+
+  color: var(--text);
+
+  font-size: 14px;
+
+  vertical-align: middle;
+}
+
+/* =========================================================
+   PRODUCT SELECT
+========================================================= */
+
+.stockout-product-select {
+  width: 100%;
+
+  height: 46px;
+
+  padding: 0 36px 0 14px;
+
+  border: 1px solid var(--border);
+  border-radius: 7px;
+
+  background-color: var(--white);
+
+  color: var(--text);
+
+  font-family: inherit;
+  font-size: 14px;
+
+  outline: none;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.stockout-product-select:focus {
+  border-color: var(--primary);
+
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.08);
+}
+
+/* =========================================================
+   NUMBER INPUTS
+========================================================= */
+
+.stockout-number-input {
+  width: 100%;
+
+  height: 44px;
+
+  padding: 0 12px;
+
+  border: 1px solid var(--border);
+  border-radius: 7px;
+
+  background-color: var(--white);
+
+  color: var(--text);
+
+  font-family: var(--font-mono);
+  font-size: 13px;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.stockout-number-input:focus {
+  border-color: var(--primary);
+
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.08);
+}
+
+/* Remove browser number arrows */
+
+.stockout-number-input::-webkit-inner-spin-button,
+.stockout-number-input::-webkit-outer-spin-button {
+  margin: 0;
+}
+
+/* =========================================================
+   QUANTITY
+========================================================= */
+
+.quantity-input {
+  text-align: center;
+}
+
+/* =========================================================
+   PRICE
+========================================================= */
+
+.price-input {
+  text-align: right;
+}
+
+/* =========================================================
+   AVAILABLE STOCK
+========================================================= */
+
+.available-cell {
+  text-align: center;
+
+  font-family: var(--font-mono);
+
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.available-cell .stock-low {
+  color: #dc2626;
+}
+
+/* =========================================================
+   LINE TOTAL
+========================================================= */
+
+.line-total-cell {
+  text-align: right;
+
+  white-space: nowrap;
+}
+
+.line-total-cell .mono-text {
+  font-size: 13px;
+
+  font-weight: 500;
+}
+
+/* =========================================================
+   MONOSPACE
+========================================================= */
+
+.mono-text {
+  font-family: var(--font-mono);
+}
+
+/* =========================================================
+   REMOVE BUTTON
+========================================================= */
+
+.action-cell {
+  text-align: center;
+
+  padding-left: 8px !important;
+  padding-right: 8px !important;
+}
+
+.remove-row-button {
+  width: 40px;
+  height: 40px;
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #f4caca;
+
+  border-radius: 7px;
+
+  background-color: var(--white);
+
+  color: #dc2626;
+
+  font-size: 18px;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.15s ease;
+}
+
+.remove-row-button:hover:not(:disabled) {
+  background-color: #fef2f2;
+
+  border-color: #f0aaaa;
+
+  transform: translateY(-1px);
+}
+
+.remove-row-button:disabled {
+  opacity: 0.35;
+
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   TABLE FOOTER
+========================================================= */
+
+.stockout-table tfoot td {
+  height: 50px;
+
+  padding: 0 15px;
+
+  background-color: #f8faf9;
+
+  border-bottom: 1px solid #eef2f1;
+
+  color: var(--text);
+
+  font-size: 14px;
+
+  font-weight: 600;
+}
+
+/* =========================================================
+   GRAND TOTAL
+========================================================= */
+
+.grand-total-label {
+  text-align: left;
+}
+
+.grand-total-quantity {
+  text-align: center;
+
+  font-family: var(--font-mono);
+}
+
+.grand-total-amount {
+  text-align: right;
+
+  font-family: var(--font-mono);
+
+  font-size: 14px;
+}
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.stockout-actions {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 16px;
+
+  padding: 20px 24px 22px;
+}
+
+/* =========================================================
+   ADD ROW
+========================================================= */
+
+.add-row-button {
+  min-height: 44px;
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 0 16px;
+
+  border: 1px solid var(--border);
+  border-radius: 7px;
+
+  background-color: var(--white);
+
+  color: var(--text);
+
+  font-family: inherit;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.add-row-button span {
+  font-size: 18px;
+
+  line-height: 1;
+}
+
+.add-row-button:hover:not(:disabled) {
+  background-color: #f8faf9;
+
+  border-color: #cbd8d5;
+}
+
+.add-row-button:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   RIGHT ACTIONS
+========================================================= */
+
+.stockout-right-actions {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+}
+
+/* =========================================================
+   CANCEL
+========================================================= */
+
+.cancel-button {
+  min-height: 44px;
+
+  padding: 0 20px;
+
+  border: 1px solid var(--border);
+  border-radius: 7px;
+
+  background-color: var(--white);
+
+  color: var(--text);
+
+  font-family: inherit;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.cancel-button:hover:not(:disabled) {
+  background-color: #f8faf9;
+
+  border-color: #cbd8d5;
+}
+
+/* =========================================================
+   SAVE BUTTON
+========================================================= */
+
+.save-stockout-button {
+  min-height: 44px;
+
+  padding: 0 20px;
+
+  border: 1px solid var(--primary);
+  border-radius: 7px;
+
+  background-color: var(--primary);
+
+  color: #ffffff;
+
+  font-family: inherit;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.15s ease;
+}
+
+.save-stockout-button:hover:not(:disabled) {
+  background-color: #0f766e;
+
+  border-color: #0f766e;
+
+  transform: translateY(-1px);
+}
+
+.save-stockout-button:disabled,
+.cancel-button:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.stockout-loading {
+  padding: 60px 24px;
+
+  text-align: center;
+
+  color: var(--text-secondary);
+
+  font-size: 14px;
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1000px) {
+  .stockout-basic-info {
+    grid-template-columns:
+      1fr
+      1fr;
+  }
+
+  .stockout-field:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+/* =========================================================
+   SMALL TABLET
+========================================================= */
+
+@media (max-width: 750px) {
+  .stockout-card-header {
+    padding: 20px 18px 8px;
+  }
+
+  .stockout-message {
+    margin-left: 18px;
+    margin-right: 18px;
+  }
+
+  .stockout-basic-info {
+    grid-template-columns: 1fr;
+
+    padding: 0 18px 18px;
+  }
+
+  .stockout-field:last-child {
+    grid-column: auto;
+  }
+
+  .stockout-table-wrapper {
+    padding: 0 18px;
+  }
+
+  .stockout-actions {
+    padding: 18px;
+
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+
+  .add-row-button {
+    width: 100%;
+  }
+
+  .stockout-right-actions {
+    width: 100%;
+  }
+
+  .cancel-button,
+  .save-stockout-button {
+    flex: 1;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 520px) {
+  .stockout-card {
+    border-radius: 8px;
+  }
+
+  .stockout-card-header {
+    padding: 18px 16px 8px;
+  }
+
+  .stockout-card-header h2 {
+    font-size: 17px;
+  }
+
+  .stockout-message {
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+
+  .stockout-basic-info {
+    padding: 0 16px 16px;
+
+    gap: 14px;
+  }
+
+  .stockout-field input {
+    height: 44px;
+
+    font-size: 13px;
+  }
+
+  .stockout-table-wrapper {
+    padding: 0 16px;
+
+    overflow-x: auto;
+  }
+
+  .stockout-table {
+    min-width: 900px;
+  }
+
+  .stockout-table thead th {
+    height: 42px;
+
+    padding: 0 12px;
+
+    font-size: 10px;
+  }
+
+  .stockout-table tbody td {
+    height: 68px;
+
+    padding: 9px 12px;
+
+    font-size: 13px;
+  }
+
+  .stockout-product-select {
+    height: 42px;
+
+    font-size: 13px;
+  }
+
+  .stockout-number-input {
+    height: 42px;
+
+    font-size: 12px;
+  }
+
+  .remove-row-button {
+    width: 38px;
+    height: 38px;
+  }
+
+  .stockout-table tfoot td {
+    height: 48px;
+
+    padding: 0 12px;
+
+    font-size: 13px;
+  }
+
+  .stockout-actions {
+    padding: 16px;
+  }
+}
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media (max-width: 380px) {
+  .stockout-card-header h2 {
+    font-size: 16px;
+  }
+
+  .stockout-field label {
+    font-size: 12px;
+  }
+
+  .stockout-right-actions {
+    flex-direction: column;
+  }
+
+  .cancel-button,
+  .save-stockout-button {
+    width: 100%;
+  }
+}
