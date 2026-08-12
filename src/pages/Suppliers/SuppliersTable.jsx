@@ -1,39 +1,48 @@
-function CategoryTable({ categories = [], onEdit, onDelete, onActivate }) {
+function SupplierTable({ suppliers = [], onEdit, onDelete, onActivate }) {
   return (
     <div className="table-responsive">
       <table className="table table-hover master-table">
-        <thead>
+        <thead className="table-light">
           <tr>
             <th>#</th>
-            <th>Name</th>
-            <th>Description</th>
+            <th>Supplier Name</th>
+            <th>Contact Person</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>Address</th>
             <th>Status</th>
             <th width="180">Actions</th>
           </tr>
         </thead>
 
         <tbody>
-          {categories.length === 0 ? (
+          {suppliers.length === 0 ? (
             <tr>
-              <td colSpan="5" className="text-center">
+              <td colSpan="8" className="text-center">
                 <div className="py-4">
-                  <i className="bi bi-folder2-open fs-1 text-secondary"></i>
+                  <i className="bi bi-truck fs-1 text-secondary"></i>
 
-                  <div className="mt-2">No Categories Found</div>
+                  <div className="mt-2">No Suppliers Found</div>
                 </div>
               </td>
             </tr>
           ) : (
-            categories.map((category, index) => (
-              <tr key={category.categoryId}>
+            suppliers.map((supplier, index) => (
+              <tr key={supplier.supplierId}>
                 <td className="text-center">{index + 1}</td>
 
-                <td>{category.categoryName}</td>
+                <td>{supplier.supplierName}</td>
 
-                <td>{category.description}</td>
+                <td>{supplier.contactPerson}</td>
+
+                <td>{supplier.phone}</td>
+
+                <td>{supplier.email}</td>
+
+                <td>{supplier.address}</td>
 
                 <td className="text-center">
-                  {category.isActive ? (
+                  {supplier.isActive ? (
                     <span className="status-active">Active</span>
                   ) : (
                     <span className="status-inactive">Inactive</span>
@@ -43,25 +52,23 @@ function CategoryTable({ categories = [], onEdit, onDelete, onActivate }) {
                 <td>
                   <div className="actions-column">
                     <button
-                      className="btn btn-outline-secondary btn-sm btn-action me-2"
-                      onClick={() => onEdit(category)}
+                      className="btn btn-outline-secondary btn-sm btn-action"
+                      onClick={() => onEdit(supplier)}
                     >
                       Edit
                     </button>
 
-                    {category.isActive ? (
+                    {supplier.isActive ? (
                       <button
                         className="btn btn-outline-danger btn-sm btn-action"
-                        onClick={() => onDelete(category.categoryId)}
-                        title="Deactivate"
+                        onClick={() => onDelete(supplier.supplierId)}
                       >
                         Deactivate
                       </button>
                     ) : (
                       <button
                         className="btn btn-outline-success btn-sm btn-action"
-                        onClick={() => onActivate(category.categoryId)}
-                        title="Activate"
+                        onClick={() => onActivate(supplier.supplierId)}
                       >
                         Activate
                       </button>
@@ -77,4 +84,4 @@ function CategoryTable({ categories = [], onEdit, onDelete, onActivate }) {
   );
 }
 
-export default CategoryTable;
+export default SupplierTable;

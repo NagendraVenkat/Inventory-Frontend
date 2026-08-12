@@ -13,6 +13,7 @@ export default defineConfig([
       reactHooks.configs.flat.recommended,
       reactRefresh.configs.vite,
     ],
+
     languageOptions: {
       globals: globals.browser,
       parserOptions: {
@@ -24,6 +25,7 @@ export default defineConfig([
 
     rules: {
       "react-refresh/only-export-components": "off",
+      "react-hooks/set-state-in-effect": "off",
     },
   },
 ]);

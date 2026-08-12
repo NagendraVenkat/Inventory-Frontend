@@ -1,0 +1,253 @@
+/* ==========================================================
+   MASTER CARD
+========================================================== */
+
+.master-card {
+  background: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+
+/* ==========================================================
+   TABLE
+========================================================== */
+
+.master-table {
+  margin-bottom: 20px;
+}
+
+.master-table thead th {
+  background: #fff;
+  border-top: none;
+  border-bottom: 2px solid #ececec;
+  color: #6c757d;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  vertical-align: middle;
+
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.master-table th,
+.master-table td {
+  padding: 18px;
+  vertical-align: middle;
+}
+
+.master-table tbody tr {
+  border-bottom: 1px solid #ececec;
+  transition: background-color 0.2s ease;
+}
+
+.master-table tbody tr:hover {
+  background: #f8f9fa;
+}
+
+
+/* ==========================================================
+   STATUS BADGES
+========================================================== */
+
+.status-active,
+.status-inactive {
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-active {
+  background: #d1fae5;
+  color: #047857;
+}
+
+.status-inactive {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+
+/* ==========================================================
+   ACTION BUTTONS
+========================================================== */
+
+.actions-column {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-action {
+  min-width: 85px;
+  height: 36px;
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
+
+/* ==========================================================
+   SEARCH BAR
+========================================================== */
+
+.search-box {
+  width: 100%;
+  max-width: 450px;
+}
+
+
+/* ==========================================================
+   ADD BUTTON
+========================================================== */
+
+.add-btn {
+  min-width: 150px;
+  height: 38px;
+  padding: 0 18px;
+  white-space: nowrap;
+}
+
+
+/* ==========================================================
+   PAGINATION
+========================================================== */
+
+.pagination-number {
+  font-weight: 500;
+}
+
+.pagination-icon,
+.pagination-number {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 8px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pagination-icon:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.active-page {
+  background: #0f766e !important;
+  border-color: #0f766e !important;
+  color: #fff !important;
+}
+
+.active-page:hover {
+  background: #115e59 !important;
+}
+
+
+/* ==========================================================
+   MODAL
+========================================================== */
+
+.modal-dialog {
+  margin-top: 5rem;
+}
+
+.modal-content {
+  border-radius: 16px;
+}
+
+.modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.modal-body {
+  padding: 24px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+
+  padding: 20px 24px;
+  border-top: 1px solid #e9ecef;
+}
+
+
+/* ==========================================================
+   FORM
+========================================================== */
+
+.form-label {
+  font-weight: 600;
+}
+
+.form-control {
+  border-radius: 8px;
+}
+
+.form-control:focus {
+  border-color: #0f766e;
+  box-shadow: 0 0 0 0.15rem rgba(15, 118, 110, 0.15);
+}
+
+
+/* ==========================================================
+   MODAL BUTTONS
+========================================================== */
+
+.modal-footer .btn {
+  min-width: 130px;
+}
+
+.btn-save {
+  min-width: 160px;
+
+  background: #0f766e !important;
+  border: none !important;
+  border-radius: 8px;
+
+  color: #fff !important;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-save:hover {
+  background: #115e59 !important;
+  color: #fff !important;
+}
+
+.btn-save:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-cancel {
+  min-width: 100px;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+}
+
+
+/* ==========================================================
+   GLOBAL BUTTONS
+========================================================== */
+
+.btn {
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.btn:focus {
+  box-shadow: none;
+}
