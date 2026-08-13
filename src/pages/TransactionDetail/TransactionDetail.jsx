@@ -1,14 +1,21 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import "./TransactionDetail.css";
+
+import { getTransactionById } from "../../services/transactionService";
 
 function TransactionDetail() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { id } = useParams();
 
   const [transaction, setTransaction] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  // =========================================================
+  // LOAD TRANSACTION
+  // =========================================================
 
   useEffect(() => {
     loadTransaction();
@@ -19,22 +26,11 @@ function TransactionDetail() {
       setLoading(true);
       setError("");
 
-      const token = localStorage.getItem("token");
+      const response = await getTransactionById(id);
 
-      const response = await fetch(
-        `https://localhost:7288/api/stock/transactions/${id}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        },
-      );
+      const result = response.data;
 
-      const result = await response.json();
-
-      if (!response.ok || !result.success) {
+      if (!result.success) {
         setError(result.message || "Transaction not found.");
         return;
       }
@@ -42,15 +38,30 @@ function TransactionDetail() {
       setTransaction(result.data);
     } catch (error) {
       console.error("Transaction detail error:", error);
-      setError("Unable to connect to the server.");
+
+      setError(
+        error.response?.data?.message || "Unable to connect to the server.",
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  /* =========================
-       Loading
-    ========================= */
+  // =========================================================
+  // BACK TO DASHBOARD
+  // =========================================================
+
+  const handleBackToDashboard = () => {
+    navigate("/dashboard", {
+      state: {
+        transactionPage: location.state?.transactionPage || 1,
+      },
+    });
+  };
+
+  // =========================================================
+  // LOADING
+  // =========================================================
 
   if (loading) {
     return (
@@ -59,6 +70,7 @@ function TransactionDetail() {
           <div className="card-header">
             <div>
               <h2>Loading Transaction...</h2>
+
               <p>Please wait while transaction details are loaded.</p>
             </div>
           </div>
@@ -67,9 +79,9 @@ function TransactionDetail() {
     );
   }
 
-  /* =========================
-       Error
-    ========================= */
+  // =========================================================
+  // ERROR
+  // =========================================================
 
   if (error || !transaction) {
     return (
@@ -78,13 +90,14 @@ function TransactionDetail() {
           <div className="card-header">
             <div>
               <h2>Transaction Not Found</h2>
+
               <p>{error || "The requested transaction does not exist."}</p>
             </div>
 
             <button
               type="button"
               className="back-button"
-              onClick={() => navigate("/dashboard")}
+              onClick={handleBackToDashboard}
             >
               <i className="bi bi-arrow-left"></i>
               Back to Dashboard
@@ -95,6 +108,10 @@ function TransactionDetail() {
     );
   }
 
+  // =========================================================
+  // TRANSACTION DATA
+  // =========================================================
+
   const items = transaction.items || [];
 
   const totalQuantity = items.reduce(
@@ -102,9 +119,17 @@ function TransactionDetail() {
     0,
   );
 
+  // =========================================================
+  // FORMAT CURRENCY
+  // =========================================================
+
   const formatCurrency = (value) => {
     return `₹${Number(value || 0).toLocaleString("en-IN")}`;
   };
+
+  // =========================================================
+  // FORMAT DATE
+  // =========================================================
 
   const formatDate = (date) => {
     if (!date) return "-";
@@ -115,6 +140,10 @@ function TransactionDetail() {
       year: "numeric",
     });
   };
+
+  // =========================================================
+  // TRANSACTION TYPE
+  // =========================================================
 
   const transactionType = String(transaction.transactionType || "")
     .trim()
@@ -131,11 +160,15 @@ function TransactionDetail() {
           ? "transaction-type-adj"
           : "";
 
+  // =========================================================
+  // UI
+  // =========================================================
+
   return (
     <div className="transaction-detail-page">
-      {/* =========================
-                Transaction Information
-            ========================= */}
+      {/* =================================================
+          TRANSACTION INFORMATION
+      ================================================= */}
 
       <section className="transaction-info-card">
         <div className="transaction-info-header">
@@ -163,7 +196,7 @@ function TransactionDetail() {
             <button
               type="button"
               className="back-button"
-              onClick={() => navigate("/dashboard")}
+              onClick={handleBackToDashboard}
             >
               <i className="bi bi-arrow-left"></i>
               Back to Dashboard
@@ -171,12 +204,13 @@ function TransactionDetail() {
           </div>
         </div>
 
-        {/* =========================
-                    Transaction Information
-                ========================= */}
+        {/* =================================================
+            TRANSACTION INFORMATION
+        ================================================= */}
 
         <div className="transaction-info-grid">
-          {/* Date - All transaction types */}
+          {/* Date */}
+
           <div className="transaction-info-item">
             <span className="transaction-label">Date</span>
 
@@ -185,7 +219,8 @@ function TransactionDetail() {
             </span>
           </div>
 
-          {/* Reference Number - Stock In and Stock Out only */}
+          {/* Reference Number */}
+
           {(transactionType === "IN" || transactionType === "OUT") && (
             <div className="transaction-info-item">
               <span className="transaction-label">Reference Number</span>
@@ -196,7 +231,8 @@ function TransactionDetail() {
             </div>
           )}
 
-          {/* Supplier - Stock In only */}
+          {/* Supplier */}
+
           {transactionType === "IN" && (
             <div className="transaction-info-item">
               <span className="transaction-label">Supplier</span>
@@ -207,20 +243,21 @@ function TransactionDetail() {
             </div>
           )}
 
-          {/* Created By - All transaction types */}
+          {/* Created By */}
+
           <div className="transaction-info-item">
             <span className="transaction-label">Created By</span>
 
             <span className="transaction-info-value">
-              {transaction.createdBy || "Unknown User"}
+              {transaction.createdByRole} / {transaction.createdByName}
             </span>
           </div>
         </div>
       </section>
 
-      {/* =========================
-                Transaction Items
-            ========================= */}
+      {/* =================================================
+          TRANSACTION ITEMS
+      ================================================= */}
 
       <section className="transaction-items-card">
         <div className="transaction-card-header">
@@ -235,9 +272,13 @@ function TransactionDetail() {
           <table className="transaction-detail-table">
             <colgroup>
               <col className="detail-product-column" />
+
               <col className="detail-code-column" />
+
               <col className="detail-quantity-column" />
+
               <col className="detail-price-column" />
+
               <col className="detail-total-column" />
             </colgroup>
 

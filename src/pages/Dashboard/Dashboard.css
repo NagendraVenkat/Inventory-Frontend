@@ -27,6 +27,33 @@
 }
 
 /* =========================================================
+   DASHBOARD HEADER
+========================================================= */
+
+.dashboard-header {
+  text-align: center;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  background: #ffffff;
+  border: 1px solid #dfe5e8;
+  border-radius: 12px;
+}
+
+.dashboard-header h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 500;
+  color: #34495e;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.dashboard-header p {
+  margin: 8px 0 0;
+  font-size: 15px;
+  color: #607080;
+}
+/* =========================================================
    SUMMARY CARDS
 ========================================================= */
 
@@ -62,7 +89,9 @@
   padding: 22px;
 }
 
-/* Card Heading */
+/* =========================================================
+   CARD HEADING
+========================================================= */
 
 .summary-card-title {
   margin: 0 0 14px;
@@ -77,7 +106,9 @@
   letter-spacing: 0.8px;
 }
 
-/* Card Main Value */
+/* =========================================================
+   CARD MAIN VALUE
+========================================================= */
 
 .summary-card-value {
   margin: 0;
@@ -96,17 +127,14 @@
 
   letter-spacing: -0.8px;
 
-  /*
-       Important:
-       Prevent large currency values from
-       overflowing the card.
-    */
   overflow-wrap: anywhere;
 
   word-break: normal;
 }
 
-/* Stock Value */
+/* =========================================================
+   STOCK VALUE
+========================================================= */
 
 .stock-value {
   font-size: clamp(22px, 2.2vw, 34px);
@@ -114,13 +142,17 @@
   letter-spacing: -1px;
 }
 
-/* Warning Number */
+/* =========================================================
+   WARNING NUMBER
+========================================================= */
 
 .summary-card-warning {
   color: #b45309;
 }
 
-/* Subtitle */
+/* =========================================================
+   SUBTITLE
+========================================================= */
 
 .summary-card-subtitle {
   margin: 12px 0 0;
@@ -140,10 +172,6 @@
   width: 100%;
 
   display: grid;
-
-  /*
-       Two cards beside each other.
-    */
 
   grid-template-columns:
     minmax(0, 1fr)
@@ -173,12 +201,6 @@
 ========================================================= */
 
 .dashboard-card-header {
-  /*
-       Important:
-       This creates space between the card border
-       and the heading text.
-    */
-
   padding: 22px 22px 18px;
 
   background: #ffffff;
@@ -210,7 +232,9 @@
   color: #5c6b69;
 }
 
-/* Warning icon */
+/* =========================================================
+   WARNING ICON
+========================================================= */
 
 .alert-icon {
   display: inline-block;
@@ -232,10 +256,6 @@
   overflow-x: auto;
   overflow-y: hidden;
 
-  /*
-       Prevent scrollbar from changing
-       the layout too aggressively.
-    */
   scrollbar-width: thin;
 }
 
@@ -253,12 +273,6 @@
   color: #1c2b2a;
 }
 
-/*
-   When the table becomes too narrow,
-   allow horizontal scrolling instead of
-   crushing the columns.
-*/
-
 .dashboard-table th,
 .dashboard-table td {
   border-bottom: 1px solid #e7ecea;
@@ -274,11 +288,6 @@
 
 .dashboard-table th {
   height: 46px;
-
-  /*
-       Space between table border
-       and header text.
-    */
 
   padding: 0 14px;
 
@@ -330,20 +339,8 @@
 ========================================================= */
 
 .low-stock-table {
-  /*
-       Minimum width gives columns enough
-       room before horizontal scrolling.
-    */
-
   min-width: 570px;
 }
-
-/*
-   Column distribution.
-
-   Code and product stay reasonably close.
-   Stock / reorder are centered.
-*/
 
 .low-code-column {
   width: 17%;
@@ -365,7 +362,9 @@
   width: 18%;
 }
 
-/* Product */
+/* =========================================================
+   PRODUCT
+========================================================= */
 
 .product-name {
   display: block;
@@ -379,7 +378,9 @@
   overflow-wrap: anywhere;
 }
 
-/* Product Code */
+/* =========================================================
+   PRODUCT CODE
+========================================================= */
 
 .product-code {
   font-size: 13px;
@@ -411,6 +412,7 @@
 
 .status-badge {
   display: inline-flex;
+
   align-items: center;
   justify-content: center;
 
@@ -422,21 +424,27 @@
   border-radius: 999px;
 
   font-size: 12px;
+
   font-weight: 600;
 
   line-height: 1.2;
+
   white-space: nowrap;
 }
 
 /* Stock = 0 */
+
 .status-danger {
   background-color: #fee2e2;
+
   color: #b91c1c;
 }
 
 /* Stock > 0 and <= reorder level */
+
 .status-warning {
   background-color: #fef3c7;
+
   color: #b45309;
 }
 
@@ -465,16 +473,12 @@
 ========================================================= */
 
 .transactions-table {
-  /*
-       This is important for responsive behavior.
-       The table will scroll rather than
-       destroy the column alignment.
-    */
-
   min-width: 620px;
 }
 
-/* Transaction columns */
+/* =========================================================
+   TRANSACTION COLUMNS
+========================================================= */
 
 .transaction-number-column {
   width: 37%;
@@ -497,10 +501,6 @@
 ========================================================= */
 
 .transaction-number {
-  /*
-       Reduced from the larger previous size.
-    */
-
   display: block;
 
   font-size: 12.5px;
@@ -559,7 +559,6 @@
   justify-content: center;
 
   min-width: 45px;
-
   min-height: 26px;
 
   padding: 4px 10px;
@@ -632,6 +631,173 @@
 }
 
 /* =========================================================
+   RECENT TRANSACTIONS PAGINATION
+========================================================= */
+
+.transaction-pagination {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 14px;
+
+  padding: 14px 16px;
+
+  border-top: 1px solid #e7ecea;
+
+  background: #ffffff;
+}
+
+/* =========================================================
+   PAGINATION INFORMATION
+========================================================= */
+
+.transaction-pagination-info {
+  color: #5c6b69;
+
+  font-size: 13px;
+
+  line-height: 1.4;
+
+  white-space: nowrap;
+}
+
+/* =========================================================
+   PAGINATION BUTTONS CONTAINER
+========================================================= */
+
+.transaction-pagination-buttons {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+}
+
+/* =========================================================
+   PAGINATION BUTTON
+========================================================= */
+
+.transaction-pagination-button {
+  min-width: 82px;
+
+  height: 36px;
+
+  padding: 0 15px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border: 1px solid #d3ddda;
+
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #26363d;
+
+  font-family: inherit;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+}
+
+/* =========================================================
+   PAGINATION BUTTON HOVER
+========================================================= */
+
+.transaction-pagination-button:hover:not(:disabled) {
+  background-color: #f0fdfa;
+
+  border-color: #0d9488;
+
+  color: #0f766e;
+
+  box-shadow: 0 2px 5px rgba(13, 148, 136, 0.12);
+
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   PAGINATION BUTTON ACTIVE
+========================================================= */
+
+.transaction-pagination-button:active:not(:disabled) {
+  transform: translateY(0);
+
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* =========================================================
+   DISABLED PAGINATION BUTTON
+========================================================= */
+
+.transaction-pagination-button:disabled {
+  opacity: 0.45;
+
+  cursor: not-allowed;
+
+  background-color: #f5f7f6;
+
+  border-color: #e0e6e4;
+
+  color: #899593;
+
+  box-shadow: none;
+}
+
+/* =========================================================
+   CURRENT PAGE
+========================================================= */
+
+.transaction-pagination-page {
+  min-width: 38px;
+
+  height: 36px;
+
+  padding: 0 10px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border: 1px solid #0d9488;
+
+  border-radius: 8px;
+
+  background-color: #0d9488;
+
+  color: #ffffff;
+
+  font-family: "JetBrains Mono", Consolas, monospace;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  box-shadow: 0 2px 5px rgba(13, 148, 136, 0.18);
+}
+
+/* =========================================================
    TABLE SCROLLBAR
 ========================================================= */
 
@@ -655,13 +821,6 @@
 ========================================================= */
 
 @media (max-width: 1100px) {
-  /*
-       Cards become 2 x 2.
-
-       This is what you requested for
-       minimized/tablet screen sizes.
-    */
-
   .summary-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
 
@@ -686,11 +845,6 @@
     font-size: clamp(21px, 3.5vw, 30px);
   }
 
-  /*
-       Keep both tables side-by-side
-       while there is still enough width.
-    */
-
   .dashboard-tables-grid {
     grid-template-columns:
       minmax(0, 1fr)
@@ -709,11 +863,13 @@
 
   .dashboard-table th {
     padding-left: 12px;
+
     padding-right: 12px;
   }
 
   .dashboard-table td {
     padding-left: 12px;
+
     padding-right: 12px;
   }
 }
@@ -724,14 +880,6 @@
 ========================================================= */
 
 @media (max-width: 900px) {
-  /*
-       At this point two tables side-by-side
-       become too narrow.
-
-       Stack them vertically so all content
-       remains clearly readable.
-    */
-
   .dashboard-tables-grid {
     grid-template-columns: 1fr;
 
@@ -761,10 +909,6 @@
 ========================================================= */
 
 @media (max-width: 600px) {
-  /*
-       Two summary cards per row.
-    */
-
   .summary-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
 
@@ -815,10 +959,6 @@
     border-radius: 11px;
   }
 
-  /*
-       Important heading spacing on mobile.
-    */
-
   .dashboard-card-header {
     padding: 17px 16px 15px;
   }
@@ -838,11 +978,6 @@
 
     margin-right: 5px;
   }
-
-  /*
-       Tables maintain their own width
-       and can scroll horizontally.
-    */
 
   .low-stock-table {
     min-width: 570px;
@@ -885,6 +1020,38 @@
 
     padding: 5px 9px;
   }
+
+  /* =======================================================
+     PAGINATION MOBILE
+  ======================================================= */
+
+  .transaction-pagination {
+    padding: 12px 14px;
+
+    gap: 10px;
+  }
+
+  .transaction-pagination-info {
+    font-size: 12px;
+  }
+
+  .transaction-pagination-button {
+    min-width: 72px;
+
+    height: 34px;
+
+    padding: 0 11px;
+
+    font-size: 12px;
+  }
+
+  .transaction-pagination-page {
+    min-width: 34px;
+
+    height: 34px;
+
+    font-size: 12px;
+  }
 }
 
 /* =========================================================
@@ -893,11 +1060,6 @@
 ========================================================= */
 
 @media (max-width: 420px) {
-  /*
-       Still keep 2 x 2 cards,
-       but reduce their internal spacing.
-    */
-
   .summary-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
 
@@ -917,11 +1079,6 @@
   .summary-card-value {
     font-size: 22px;
   }
-
-  /*
-       Currency needs additional protection
-       on very small screens.
-    */
 
   .stock-value {
     font-size: 18px;
@@ -946,24 +1103,100 @@
   .dashboard-card-heading p {
     font-size: 12px;
   }
+
+  /* =======================================================
+     VERY SMALL MOBILE PAGINATION
+  ======================================================= */
+
+  .transaction-pagination {
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 10px;
+  }
+
+  .transaction-pagination-info {
+    text-align: center;
+  }
+
+  .transaction-pagination-buttons {
+    justify-content: center;
+
+    gap: 8px;
+  }
+
+  .transaction-pagination-button {
+    flex: 1;
+
+    max-width: 110px;
+  }
+
+  .transaction-pagination-page {
+    min-width: 34px;
+  }
 }
 
-/* Stock column header */
+/* =========================================================
+   STOCK COLUMN HEADER
+========================================================= */
+
 .low-stock-table th:nth-child(3) {
   text-align: center !important;
+
   padding-left: 0;
+
   padding-right: 12px;
 }
 
-/* Reorder Level column header */
+/* =========================================================
+   REORDER LEVEL COLUMN HEADER
+========================================================= */
+
 .low-stock-table th:nth-child(4) {
   text-align: center !important;
+
   padding-left: 0;
+
   padding-right: 12px;
 }
 
-/* Stock and Reorder values */
+/* =========================================================
+   STOCK AND REORDER VALUES
+========================================================= */
+
 .low-stock-table td:nth-child(3),
 .low-stock-table td:nth-child(4) {
   text-align: center !important;
+}
+/* =========================================================
+   TRANSACTION TABLE LOADING
+========================================================= */
+
+.transaction-loading-message {
+  height: 290px !important;
+
+  text-align: center !important;
+
+  color: #71807e !important;
+
+  font-size: 14px !important;
+
+  font-weight: 500 !important;
+}
+
+.today-transaction-breakdown {
+  font-weight: 500;
+}
+
+.today-in {
+  color: #198754;
+}
+
+.today-out {
+  color: #dc3545;
+}
+
+.today-adjust {
+  color: #fd7e14;
 }

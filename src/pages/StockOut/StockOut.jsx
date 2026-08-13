@@ -24,15 +24,20 @@ function StockOut() {
     },
   ]);
 
+  const [errors, setErrors] = useState({
+    referenceNo: "",
+    transactionDate: "",
+    items: {},
+    form: "",
+  });
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-
-  const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  /* =========================
-       Load Products
-    ========================= */
+  // =========================================================
+  // LOAD PRODUCTS
+  // =========================================================
 
   useEffect(() => {
     loadProducts();
@@ -41,7 +46,13 @@ function StockOut() {
   const loadProducts = async () => {
     try {
       setLoading(true);
-      setError("");
+
+      setErrors({
+        referenceNo: "",
+        transactionDate: "",
+        items: {},
+        form: "",
+      });
 
       const result = await getStockOutProducts();
 
@@ -59,19 +70,29 @@ function StockOut() {
     } catch (error) {
       console.error("Stock Out product load error:", error);
 
-      setError(
-        error.response?.data?.message ||
+      setErrors((currentErrors) => ({
+        ...currentErrors,
+        form:
+          error.response?.data?.message ||
           error.message ||
           "Unable to load products.",
-      );
+      }));
     } finally {
       setLoading(false);
     }
   };
 
-  /* =========================
-       Update Item
-    ========================= */
+  // =========================================================
+  // GET SELECTED PRODUCT
+  // =========================================================
+
+  const getSelectedProduct = (productId) => {
+    return products.find((product) => product.productId === productId);
+  };
+
+  // =========================================================
+  // UPDATE ITEM
+  // =========================================================
 
   const updateItem = (index, field, value) => {
     setItems((currentItems) =>
@@ -84,11 +105,29 @@ function StockOut() {
           : item,
       ),
     );
+
+    setErrors((currentErrors) => {
+      const updatedErrors = { ...currentErrors };
+
+      if (updatedErrors.items?.[index]?.[field]) {
+        updatedErrors.items = {
+          ...updatedErrors.items,
+          [index]: {
+            ...updatedErrors.items[index],
+            [field]: "",
+          },
+        };
+      }
+
+      return updatedErrors;
+    });
+
+    setSuccess("");
   };
 
-  /* =========================
-       Product Change
-    ========================= */
+  // =========================================================
+  // PRODUCT CHANGE
+  // =========================================================
 
   const handleProductChange = (index, productId) => {
     const selectedProduct = products.find(
@@ -107,45 +146,204 @@ function StockOut() {
           : item,
       ),
     );
+
+    setErrors((currentErrors) => {
+      const updatedErrors = { ...currentErrors };
+
+      if (updatedErrors.items?.[index]) {
+        updatedErrors.items = {
+          ...updatedErrors.items,
+          [index]: {
+            ...updatedErrors.items[index],
+            productId: "",
+            quantity: "",
+            unitPrice: "",
+          },
+        };
+      }
+
+      return updatedErrors;
+    });
+
+    setSuccess("");
   };
 
-  /* =========================
-       Get Selected Product
-    ========================= */
+  // =========================================================
+  // VALIDATE COMPLETE FORM
+  // =========================================================
 
-  const getSelectedProduct = (productId) => {
-    return products.find((product) => product.productId === productId);
+  const validateForm = () => {
+    const validationErrors = {
+      referenceNo: "",
+      transactionDate: "",
+      items: {},
+      form: "",
+    };
+
+    // -------------------------------------------------------
+    // REFERENCE VALIDATION
+    // MANDATORY FIELD
+    // -------------------------------------------------------
+
+    const trimmedReferenceNo = referenceNo.trim();
+
+    if (!trimmedReferenceNo) {
+      validationErrors.referenceNo = "Issued To / Reference is required.";
+    } else if (trimmedReferenceNo.length < 3) {
+      validationErrors.referenceNo =
+        "Issued To / Reference must contain at least 3 characters.";
+    } else if (!/^[A-Za-z0-9][A-Za-z0-9\/\-_ ]*$/.test(trimmedReferenceNo)) {
+      validationErrors.referenceNo =
+        "Use letters, numbers, spaces, hyphen (-), underscore (_) or slash (/).";
+    }
+
+    // -------------------------------------------------------
+    // DATE VALIDATION
+    // MANDATORY FIELD
+    // -------------------------------------------------------
+
+    if (!transactionDate) {
+      validationErrors.transactionDate = "Transaction Date is required.";
+    } else {
+      const selectedDate = new Date(`${transactionDate}T00:00:00`);
+
+      const today = new Date();
+
+      today.setHours(0, 0, 0, 0);
+
+      if (selectedDate > today) {
+        validationErrors.transactionDate =
+          "Transaction Date cannot be a future date.";
+      }
+    }
+
+    // -------------------------------------------------------
+    // ITEM VALIDATION
+    // -------------------------------------------------------
+
+    if (items.length === 0) {
+      validationErrors.items[0] = {
+        productId: "Please add at least one product.",
+        quantity: "",
+        unitPrice: "",
+      };
+    }
+
+    const selectedProductIds = [];
+
+    items.forEach((item, index) => {
+      const itemErrors = {
+        productId: "",
+        quantity: "",
+        unitPrice: "",
+      };
+
+      // -----------------------------------------------------
+      // PRODUCT
+      // -----------------------------------------------------
+
+      if (!item.productId) {
+        itemErrors.productId = "Please select a product.";
+      } else {
+        if (selectedProductIds.includes(item.productId)) {
+          itemErrors.productId =
+            "This product is already added in another row.";
+        }
+
+        selectedProductIds.push(item.productId);
+
+        const product = getSelectedProduct(item.productId);
+
+        if (!product) {
+          itemErrors.productId = "Selected product was not found.";
+        } else if (!product.isActive) {
+          itemErrors.productId = "This product is inactive.";
+        }
+      }
+
+      // -----------------------------------------------------
+      // QUANTITY
+      // -----------------------------------------------------
+
+      const quantity = Number(item.quantity);
+
+      if (item.quantity === "") {
+        itemErrors.quantity = "Quantity is required.";
+      } else if (!Number.isInteger(quantity) || quantity <= 0) {
+        itemErrors.quantity =
+          "Quantity must be a whole number greater than zero.";
+      } else {
+        const product = getSelectedProduct(item.productId);
+
+        if (product && quantity > Number(product.currentStock)) {
+          itemErrors.quantity = `Available stock is ${product.currentStock}.`;
+        }
+      }
+
+      // -----------------------------------------------------
+      // UNIT PRICE
+      // -----------------------------------------------------
+
+      const unitPrice = Number(item.unitPrice);
+
+      if (item.unitPrice === "") {
+        itemErrors.unitPrice = "Unit Price is required.";
+      } else if (!Number.isFinite(unitPrice) || unitPrice <= 0) {
+        itemErrors.unitPrice = "Unit Price must be greater than zero.";
+      }
+
+      validationErrors.items[index] = itemErrors;
+    });
+
+    // -------------------------------------------------------
+    // CHECK HEADER ERRORS
+    // -------------------------------------------------------
+
+    const hasHeaderErrors =
+      validationErrors.referenceNo || validationErrors.transactionDate;
+
+    // -------------------------------------------------------
+    // CHECK ITEM ERRORS
+    // -------------------------------------------------------
+
+    const hasItemErrors = Object.values(validationErrors.items).some(
+      (itemError) =>
+        itemError.productId || itemError.quantity || itemError.unitPrice,
+    );
+
+    if (!hasHeaderErrors && !hasItemErrors) {
+      return null;
+    }
+
+    return validationErrors;
   };
 
-  /* =========================
-       Add Row
-    ========================= */
+  // =========================================================
+  // ADD ROW
+  // =========================================================
 
   const addRow = () => {
-    setError("");
-    setSuccess("");
+    /*
+      Validate the complete current form before adding
+      another row.
 
-    const lastItem = items[items.length - 1];
+      This means:
+      - Reference No is validated only if entered.
+      - Date is validated.
+      - Every existing item row is validated.
+      - Remarks is ignored because it is optional.
+    */
 
-    if (!lastItem.productId) {
-      setError("Please select a product before adding another row.");
+    const validationErrors = validateForm();
+
+    if (validationErrors) {
+      setErrors(validationErrors);
+      setSuccess("");
       return;
     }
 
-    if (!lastItem.quantity || Number(lastItem.quantity) <= 0) {
-      setError(
-        "Quantity should be greater than zero before adding another row.",
-      );
-      return;
-    }
-
-    if (!lastItem.unitPrice || Number(lastItem.unitPrice) <= 0) {
-      setError(
-        "Unit Price should be greater than zero before adding another row.",
-      );
-      return;
-    }
-
+    // Current rows are valid.
+    // Now add a new empty row.
     setItems((currentItems) => [
       ...currentItems,
       {
@@ -154,55 +352,126 @@ function StockOut() {
         unitPrice: "",
       },
     ]);
+
+    setErrors({
+      referenceNo: "",
+      transactionDate: "",
+      items: {},
+      form: "",
+    });
+
+    setSuccess("");
   };
 
-  /* =========================
-       Remove Row
-    ========================= */
+  // =========================================================
+  // CLEAR ROW
+  // =========================================================
+
+  const clearRow = (index) => {
+    setItems((currentItems) =>
+      currentItems.map((item, itemIndex) =>
+        itemIndex === index
+          ? {
+              productId: "",
+              quantity: "",
+              unitPrice: "",
+            }
+          : item,
+      ),
+    );
+
+    setErrors((currentErrors) => {
+      const updatedErrors = { ...currentErrors };
+
+      if (updatedErrors.items) {
+        updatedErrors.items = {
+          ...updatedErrors.items,
+          [index]: {
+            productId: "",
+            quantity: "",
+            unitPrice: "",
+          },
+        };
+      }
+
+      return updatedErrors;
+    });
+
+    setSuccess("");
+  };
+
+  // =========================================================
+  // REMOVE ROW
+  // =========================================================
 
   const removeRow = (index) => {
     if (items.length === 1) {
+      clearRow(index);
       return;
     }
 
     setItems((currentItems) =>
       currentItems.filter((_, itemIndex) => itemIndex !== index),
     );
+
+    setErrors((currentErrors) => {
+      if (!currentErrors.items) {
+        return currentErrors;
+      }
+
+      const updatedItemErrors = {};
+
+      Object.entries(currentErrors.items).forEach(([itemIndex, itemError]) => {
+        const oldIndex = Number(itemIndex);
+
+        if (oldIndex < index) {
+          updatedItemErrors[oldIndex] = itemError;
+        } else if (oldIndex > index) {
+          updatedItemErrors[oldIndex - 1] = itemError;
+        }
+      });
+
+      return {
+        ...currentErrors,
+        items: updatedItemErrors,
+      };
+    });
+
+    setSuccess("");
   };
 
-  /* =========================
-       Line Total
-    ========================= */
+  // =========================================================
+  // LINE TOTAL
+  // =========================================================
 
   const getLineTotal = (item) => {
     const quantity = Number(item.quantity) || 0;
-
     const unitPrice = Number(item.unitPrice) || 0;
 
     return quantity * unitPrice;
   };
 
-  /* =========================
-       Grand Quantity
-    ========================= */
+  // =========================================================
+  // GRAND QUANTITY
+  // =========================================================
 
   const grandQuantity = items.reduce(
     (total, item) => total + (Number(item.quantity) || 0),
     0,
   );
 
-  /* =========================
-       Grand Total
-    ========================= */
+  // =========================================================
+  // GRAND TOTAL
+  // =========================================================
 
   const grandTotal = items.reduce(
     (total, item) => total + getLineTotal(item),
     0,
   );
 
-  /* =========================
-       Currency
-    ========================= */
+  // =========================================================
+  // CURRENCY
+  // =========================================================
 
   const formatCurrency = (value) => {
     return `₹${Number(value || 0).toLocaleString("en-IN", {
@@ -211,123 +480,29 @@ function StockOut() {
     })}`;
   };
 
-  /* =========================
-       Save Stock Out
-    ========================= */
+  // =========================================================
+  // SAVE STOCK OUT
+  // =========================================================
 
   const handleSave = async () => {
+    setErrors({
+      referenceNo: "",
+      transactionDate: "",
+      items: {},
+      form: "",
+    });
+
+    setSuccess("");
+
+    const validationErrors = validateForm();
+
+    if (validationErrors) {
+      setErrors(validationErrors);
+      return;
+    }
+
     try {
-      setError("");
-      setSuccess("");
-
-      /* -------------------------
-         Date Validation
-      ------------------------- */
-
-      if (!transactionDate) {
-        setError("Transaction Date is required.");
-        return;
-      }
-
-      if (new Date(transactionDate) > new Date()) {
-        setError("Transaction Date cannot be in the future.");
-        return;
-      }
-
-      /* -------------------------
-         At Least One Product
-      ------------------------- */
-
-      if (items.length === 0) {
-        setError("Please add at least one product.");
-        return;
-      }
-
-      /* -------------------------
-         Duplicate Product Check
-      ------------------------- */
-
-      const productIds = items.map((item) => item.productId);
-
-      const duplicateProductId = productIds.find(
-        (id, index) => id && productIds.indexOf(id) !== index,
-      );
-
-      if (duplicateProductId) {
-        const duplicateProduct = getSelectedProduct(duplicateProductId);
-
-        setError(
-          duplicateProduct
-            ? `Product '${duplicateProduct.productName}' is added more than once.`
-            : "The same product cannot be added more than once.",
-        );
-
-        return;
-      }
-
-      /* -------------------------
-         Validate EVERY Row
-      ------------------------- */
-
-      for (let index = 0; index < items.length; index++) {
-        const item = items[index];
-
-        /* Product */
-
-        if (!item.productId) {
-          setError(`Please select a product for row ${index + 1}.`);
-          return;
-        }
-
-        /* Quantity */
-
-        if (!item.quantity || Number(item.quantity) <= 0) {
-          setError(
-            `Quantity should be greater than zero for row ${index + 1}.`,
-          );
-          return;
-        }
-
-        /* Unit Price */
-
-        if (!item.unitPrice || Number(item.unitPrice) <= 0) {
-          setError(
-            `Unit Price should be greater than zero for row ${index + 1}.`,
-          );
-          return;
-        }
-
-        /* -------------------------
-           Product Validation
-        ------------------------- */
-
-        const product = getSelectedProduct(item.productId);
-
-        if (!product) {
-          setError(`Product in row ${index + 1} was not found.`);
-          return;
-        }
-
-        if (!product.isActive) {
-          setError(`Product '${product.productName}' is inactive.`);
-          return;
-        }
-
-        /* -------------------------
-           Available Stock Check
-        ------------------------- */
-
-        if (Number(item.quantity) > Number(product.currentStock)) {
-          setError(
-            `Cannot issue ${item.quantity} units of '${product.productName}'. Available stock is ${product.currentStock}.`,
-          );
-          return;
-        }
-      }
-
-      /* -------------------------
-         Payload
-      ------------------------- */
+      setSaving(true);
 
       const payload = {
         transactionDate: `${transactionDate}T00:00:00`,
@@ -343,30 +518,48 @@ function StockOut() {
         })),
       };
 
-      /* -------------------------
-         Save
-      ------------------------- */
-
-      setSaving(true);
-
       const result = await createStockOut(payload);
 
+      // =====================================================
+      // BACKEND VALIDATION
+      // =====================================================
+
       if (!result.success) {
-        setError(result.message || "Unable to save Stock Out.");
+        const message = result.message || "Unable to save Stock Out.";
+
+        if (
+          message.toLowerCase().includes("reference") &&
+          message.toLowerCase().includes("already")
+        ) {
+          setErrors({
+            referenceNo: message,
+            transactionDate: "",
+            items: {},
+            form: "",
+          });
+        } else {
+          setErrors({
+            referenceNo: "",
+            transactionDate: "",
+            items: {},
+            form: message,
+          });
+        }
+
         return;
       }
 
-      /* -------------------------
-         Success
-      ------------------------- */
+      // =====================================================
+      // SUCCESS
+      // =====================================================
 
       setSuccess(
         `Stock Out completed successfully. Transaction: ${result.data.transactionNumber}`,
       );
 
-      /* -------------------------
-         Reset Form
-      ------------------------- */
+      // =====================================================
+      // RESET FORM
+      // =====================================================
 
       setReferenceNo("");
       setTransactionDate("");
@@ -380,27 +573,50 @@ function StockOut() {
         },
       ]);
 
-      /* -------------------------
-         Refresh Products
-      ------------------------- */
+      setErrors({
+        referenceNo: "",
+        transactionDate: "",
+        items: {},
+        form: "",
+      });
+
+      // =====================================================
+      // REFRESH PRODUCTS
+      // =====================================================
 
       await loadProducts();
     } catch (error) {
       console.error("Stock Out save error:", error);
 
-      setError(
-        error.response?.data?.message ||
-          error.message ||
-          "Unable to connect to the server.",
-      );
+      const message =
+        error.response?.data?.message || "Unable to connect to the server.";
+
+      if (
+        message.toLowerCase().includes("reference") &&
+        message.toLowerCase().includes("already")
+      ) {
+        setErrors({
+          referenceNo: message,
+          transactionDate: "",
+          items: {},
+          form: "",
+        });
+      } else {
+        setErrors({
+          referenceNo: "",
+          transactionDate: "",
+          items: {},
+          form: message,
+        });
+      }
     } finally {
       setSaving(false);
     }
   };
 
-  /* =========================
-       Cancel
-    ========================= */
+  // =========================================================
+  // CANCEL
+  // =========================================================
 
   const handleCancel = () => {
     if (saving) {
@@ -410,9 +626,9 @@ function StockOut() {
     navigate("/dashboard");
   };
 
-  /* =========================
-       Loading
-    ========================= */
+  // =========================================================
+  // LOADING
+  // =========================================================
 
   if (loading) {
     return (
@@ -424,114 +640,133 @@ function StockOut() {
     );
   }
 
+  // =========================================================
+  // UI
+  // =========================================================
+
   return (
     <div className="stockout-page">
       <div className="stockout-card">
-        {/* =========================
-                    HEADER
-                ========================= */}
+        {/* =====================================================
+            HEADER
+        ===================================================== */}
 
         <div className="stockout-card-header">
-          <div>
-            <h2>New Stock Out</h2>
-
-            <p>Issue products from inventory</p>
-          </div>
+          <h2>New Stock Out (Issue Entry)</h2>
         </div>
 
-        {/* =========================
-                    MESSAGES
-                ========================= */}
+        {/* =====================================================
+            FORM LEVEL ERROR
+        ===================================================== */}
 
-        {error && (
-          <div className="stockout-message stockout-error">{error}</div>
+        {errors.form && (
+          <div className="stockout-message stockout-error">
+            <i className="bi bi-exclamation-circle-fill"></i>
+
+            <span>{errors.form}</span>
+          </div>
         )}
 
-        {success && (
-          <div className="stockout-message stockout-success">{success}</div>
-        )}
-
-        {/* =========================
-                    BASIC INFORMATION
-                ========================= */}
+        {/* =====================================================
+            BASIC INFORMATION
+        ===================================================== */}
 
         <div className="stockout-basic-info">
-          {/* Reference */}
-
-          <div className="stockout-field">
-            <label>Issued To / Reference</label>
-
-            <input
-              type="text"
-              value={referenceNo}
-              onChange={(e) => setReferenceNo(e.target.value)}
-              placeholder="Enter reference"
-              maxLength={50}
-            />
-          </div>
-
-          {/* Date */}
+          {/* REFERENCE */}
 
           <div className="stockout-field">
             <label>
-              Date
-              <span>*</span>
+              Issued To / Reference <span className="required-star">*</span>
+            </label>
+            <input
+              type="text"
+              className={errors.referenceNo ? "stockout-invalid" : ""}
+              value={referenceNo}
+              onChange={(e) => {
+                setReferenceNo(e.target.value);
+
+                setErrors((currentErrors) => ({
+                  ...currentErrors,
+                  referenceNo: "",
+                }));
+
+                setSuccess("");
+              }}
+              placeholder="Example: DEPT-2026-001"
+              maxLength={50}
+            />
+
+            <span className="field-hint">
+              Example: DEPT-2026-001 or ISSUE/2026/001
+            </span>
+
+            {errors.referenceNo && (
+              <span className="validation-message">{errors.referenceNo}</span>
+            )}
+          </div>
+
+          {/* DATE */}
+
+          <div className="stockout-field">
+            <label>
+              Date <span className="required-star">*</span>
             </label>
 
             <input
               type="date"
+              className={errors.transactionDate ? "stockout-invalid" : ""}
               value={transactionDate}
-              onChange={(e) => setTransactionDate(e.target.value)}
               max={new Date().toISOString().split("T")[0]}
+              onChange={(e) => {
+                setTransactionDate(e.target.value);
+
+                setErrors((currentErrors) => ({
+                  ...currentErrors,
+                  transactionDate: "",
+                }));
+
+                setSuccess("");
+              }}
             />
-          </div>
 
-          {/* Remarks */}
-
-          <div className="stockout-field">
-            <label>Remarks</label>
-
-            <input
-              type="text"
-              value={remarks}
-              onChange={(e) => setRemarks(e.target.value)}
-              placeholder="Optional"
-              maxLength={300}
-            />
+            {errors.transactionDate && (
+              <span className="validation-message">
+                {errors.transactionDate}
+              </span>
+            )}
           </div>
         </div>
 
-        {/* =========================
-                    TABLE
-                ========================= */}
+        {/* =====================================================
+            ITEMS TABLE
+        ===================================================== */}
 
         <div className="stockout-table-wrapper">
           <table className="stockout-table">
             <colgroup>
               <col className="stockout-product-column" />
-
               <col className="stockout-available-column" />
-
               <col className="stockout-quantity-column" />
-
               <col className="stockout-price-column" />
-
               <col className="stockout-total-column" />
-
               <col className="stockout-action-column" />
             </colgroup>
 
-            {/* TABLE HEADER */}
-
             <thead>
               <tr>
-                <th>PRODUCT</th>
+                <th>
+                  PRODUCT <span className="required-star">*</span>
+                </th>
 
                 <th className="center-header">AVAILABLE</th>
 
-                <th className="center-header">QTY</th>
+                <th className="center-header">
+                  QTY <span className="required-star">*</span>
+                </th>
 
-                <th className="right-header">UNIT PRICE ₹</th>
+                <th className="right-header">
+                  UNIT PRICE ₹ <span className="required-star">*</span>
+                </th>
 
                 <th className="right-header">LINE TOTAL ₹</th>
 
@@ -539,19 +774,21 @@ function StockOut() {
               </tr>
             </thead>
 
-            {/* TABLE BODY */}
-
             <tbody>
               {items.map((item, index) => {
                 const selectedProduct = getSelectedProduct(item.productId);
 
+                const itemErrors = errors.items?.[index] || {};
+
                 return (
                   <tr key={index}>
-                    {/* Product */}
+                    {/* PRODUCT */}
 
                     <td>
                       <select
-                        className="stockout-product-select"
+                        className={`stockout-product-select ${
+                          itemErrors.productId ? "stockout-invalid" : ""
+                        }`}
                         value={item.productId}
                         onChange={(e) =>
                           handleProductChange(index, e.target.value)
@@ -559,25 +796,34 @@ function StockOut() {
                       >
                         <option value="">Select Product</option>
 
-                        {products.map((product) => (
-                          <option
-                            key={product.productId}
-                            value={product.productId}
-                            disabled={items.some(
-                              (existingItem, existingIndex) =>
-                                existingIndex !== index &&
-                                existingItem.productId === product.productId,
-                            )}
-                          >
-                            {product.productCode}
-                            {" — "}
-                            {product.productName}
-                          </option>
-                        ))}
+                        {products.map((product) => {
+                          const alreadySelected = items.some(
+                            (existingItem, existingIndex) =>
+                              existingIndex !== index &&
+                              existingItem.productId === product.productId,
+                          );
+
+                          return (
+                            <option
+                              key={product.productId}
+                              value={product.productId}
+                              disabled={alreadySelected}
+                            >
+                              {product.productCode} — {product.productName}
+                              {alreadySelected ? " (Already selected)" : ""}
+                            </option>
+                          );
+                        })}
                       </select>
+
+                      {itemErrors.productId && (
+                        <span className="validation-message table-validation">
+                          {itemErrors.productId}
+                        </span>
+                      )}
                     </td>
 
-                    {/* Available */}
+                    {/* AVAILABLE */}
 
                     <td className="available-cell">
                       <span
@@ -593,11 +839,13 @@ function StockOut() {
                       </span>
                     </td>
 
-                    {/* Quantity */}
+                    {/* QUANTITY */}
 
                     <td>
                       <input
-                        className="stockout-number-input quantity-input"
+                        className={`stockout-number-input quantity-input ${
+                          itemErrors.quantity ? "stockout-invalid" : ""
+                        }`}
                         type="number"
                         min="1"
                         max={
@@ -611,13 +859,21 @@ function StockOut() {
                         }
                         placeholder="0"
                       />
+
+                      {itemErrors.quantity && (
+                        <span className="validation-message table-validation">
+                          {itemErrors.quantity}
+                        </span>
+                      )}
                     </td>
 
-                    {/* Unit Price */}
+                    {/* UNIT PRICE */}
 
                     <td>
                       <input
-                        className="stockout-number-input price-input"
+                        className={`stockout-number-input price-input ${
+                          itemErrors.unitPrice ? "stockout-invalid" : ""
+                        }`}
                         type="number"
                         min="0.01"
                         step="0.01"
@@ -627,9 +883,15 @@ function StockOut() {
                         }
                         placeholder="0.00"
                       />
+
+                      {itemErrors.unitPrice && (
+                        <span className="validation-message table-validation">
+                          {itemErrors.unitPrice}
+                        </span>
+                      )}
                     </td>
 
-                    {/* Line Total */}
+                    {/* LINE TOTAL */}
 
                     <td className="line-total-cell">
                       <span className="mono-text">
@@ -637,25 +899,45 @@ function StockOut() {
                       </span>
                     </td>
 
-                    {/* Remove */}
+                    {/* ACTIONS */}
 
                     <td className="action-cell">
-                      <button
-                        type="button"
-                        className="remove-row-button"
-                        onClick={() => removeRow(index)}
-                        disabled={items.length === 1}
-                        title="Remove row"
-                      >
-                        ×
-                      </button>
+                      <div className="row-actions">
+                        {/* PLUS ONLY ON FIRST ROW */}
+
+                        {index === 0 && (
+                          <button
+                            type="button"
+                            className="add-row-icon-button"
+                            onClick={addRow}
+                            disabled={saving}
+                            title="Add another row"
+                          >
+                            +
+                          </button>
+                        )}
+
+                        {/* REMOVE */}
+
+                        <button
+                          type="button"
+                          className="remove-row-button"
+                          onClick={() => removeRow(index)}
+                          disabled={saving}
+                          title={
+                            items.length === 1 ? "Clear row" : "Remove row"
+                          }
+                        >
+                          ×
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );
               })}
             </tbody>
 
-            {/* TABLE FOOTER */}
+            {/* GRAND TOTAL */}
 
             <tfoot>
               <tr>
@@ -677,22 +959,52 @@ function StockOut() {
           </table>
         </div>
 
-        {/* =========================
-                    ACTIONS
-                ========================= */}
+        {/* =====================================================
+            REMARKS
+        ===================================================== */}
+
+        <div className="stockout-remarks">
+          <div className="stockout-field">
+            <label>Remarks</label>
+
+            <textarea
+              value={remarks}
+              onChange={(e) => {
+                setRemarks(e.target.value);
+                setSuccess("");
+              }}
+              maxLength={300}
+              placeholder="Enter remarks (optional)"
+              rows={3}
+            />
+          </div>
+        </div>
+
+        {/* =====================================================
+            SUCCESS MESSAGE
+            BETWEEN REMARKS AND BUTTONS
+        ===================================================== */}
+
+        {success && (
+          <div className="stockout-success-wrapper">
+            <div className="stockout-success">
+              <i className="bi bi-check-circle-fill"></i>
+
+              <span>{success}</span>
+            </div>
+          </div>
+        )}
+
+        {/* =====================================================
+            ACTION AREA
+        ===================================================== */}
 
         <div className="stockout-actions">
-          <button
-            type="button"
-            className="add-row-button"
-            onClick={addRow}
-            disabled={saving}
-          >
-            <span>+</span>
-            Add Row
-          </button>
+          <div></div>
 
           <div className="stockout-right-actions">
+            {/* CANCEL */}
+
             <button
               type="button"
               className="cancel-button"
@@ -701,6 +1013,8 @@ function StockOut() {
             >
               Cancel
             </button>
+
+            {/* SAVE */}
 
             <button
               type="button"

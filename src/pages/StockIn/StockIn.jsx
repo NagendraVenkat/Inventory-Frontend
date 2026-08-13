@@ -26,19 +26,23 @@ function StockIn() {
     },
   ]);
 
-  const [loading, setLoading] = useState(true);
+  const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
   const [success, setSuccess] = useState("");
 
   useEffect(() => {
     loadInitialData();
   }, []);
 
+  // =========================================================
+  // LOAD INITIAL DATA
+  // =========================================================
+
   const loadInitialData = async () => {
     try {
       setLoading(true);
-      setError("");
+      setErrors({});
 
       const { products: productsResult, suppliers: suppliersResult } =
         await getStockInInitialData();
@@ -49,18 +53,22 @@ function StockIn() {
         suppliersResult.data?.items || suppliersResult.data || [];
 
       setProducts(Array.isArray(productData) ? productData : []);
-
       setSuppliers(Array.isArray(supplierData) ? supplierData : []);
     } catch (error) {
       console.error("Stock In initial load error:", error);
 
-      setError(
-        error.response?.data?.message || "Unable to load Stock In data.",
-      );
+      setErrors({
+        form: error.response?.data?.message || "Unable to load Stock In data.",
+      });
     } finally {
       setLoading(false);
     }
   };
+
+  // =========================================================
+  // UPDATE ITEM
+  // =========================================================
+
   const updateItem = (index, field, value) => {
     setItems((currentItems) =>
       currentItems.map((item, itemIndex) =>
@@ -72,29 +80,160 @@ function StockIn() {
           : item,
       ),
     );
+
+    setErrors((currentErrors) => {
+      const updatedErrors = { ...currentErrors };
+
+      if (updatedErrors.items?.[index]?.[field]) {
+        updatedErrors.items = {
+          ...updatedErrors.items,
+          [index]: {
+            ...updatedErrors.items[index],
+            [field]: "",
+          },
+        };
+      }
+
+      return updatedErrors;
+    });
+
+    setSuccess("");
   };
 
+  // =========================================================
+  // VALIDATE COMPLETE FORM
+  // =========================================================
+
+  const validateForm = () => {
+    const validationErrors = {
+      supplierId: "",
+      referenceNo: "",
+      transactionDate: "",
+      items: {},
+    };
+
+    // -------------------------------------------------------
+    // HEADER VALIDATION
+    // -------------------------------------------------------
+
+    if (!supplierId) {
+      validationErrors.supplierId = "Please select a supplier.";
+    }
+
+    if (!referenceNo.trim()) {
+      validationErrors.referenceNo = "Reference / Invoice Number is required.";
+    } else if (referenceNo.trim().length < 3) {
+      validationErrors.referenceNo =
+        "Reference / Invoice Number must contain at least 3 characters.";
+    } else if (!/^[A-Za-z0-9][A-Za-z0-9\/\-_]*$/.test(referenceNo.trim())) {
+      validationErrors.referenceNo =
+        "Use letters, numbers, hyphen (-), underscore (_) or slash (/).";
+    }
+
+    if (!transactionDate) {
+      validationErrors.transactionDate = "Transaction Date is required.";
+    } else {
+      const selectedDate = new Date(`${transactionDate}T00:00:00`);
+      const today = new Date();
+
+      today.setHours(0, 0, 0, 0);
+
+      if (selectedDate > today) {
+        validationErrors.transactionDate =
+          "Transaction Date cannot be a future date.";
+      }
+    }
+
+    // -------------------------------------------------------
+    // ITEM VALIDATION
+    // -------------------------------------------------------
+
+    if (items.length === 0) {
+      validationErrors.items[0] = {
+        productId: "Please add at least one product.",
+        quantity: "",
+        unitPrice: "",
+      };
+    }
+
+    const selectedProductIds = [];
+
+    items.forEach((item, index) => {
+      const itemErrors = {
+        productId: "",
+        quantity: "",
+        unitPrice: "",
+      };
+
+      // Product
+      if (!item.productId) {
+        itemErrors.productId = "Please select a product.";
+      } else {
+        if (selectedProductIds.includes(item.productId)) {
+          itemErrors.productId =
+            "This product is already added in another row.";
+        }
+
+        selectedProductIds.push(item.productId);
+      }
+
+      // Quantity
+      const quantity = Number(item.quantity);
+
+      if (item.quantity === "") {
+        itemErrors.quantity = "Quantity is required.";
+      } else if (!Number.isInteger(quantity) || quantity <= 0) {
+        itemErrors.quantity =
+          "Quantity must be a whole number greater than zero.";
+      }
+
+      // Unit Price
+      const unitPrice = Number(item.unitPrice);
+
+      if (item.unitPrice === "") {
+        itemErrors.unitPrice = "Unit Price is required.";
+      } else if (!Number.isFinite(unitPrice) || unitPrice <= 0) {
+        itemErrors.unitPrice = "Unit Price must be greater than zero.";
+      }
+
+      validationErrors.items[index] = itemErrors;
+    });
+
+    // -------------------------------------------------------
+    // CHECK WHETHER ANY ERROR EXISTS
+    // -------------------------------------------------------
+
+    const hasHeaderErrors =
+      validationErrors.supplierId ||
+      validationErrors.referenceNo ||
+      validationErrors.transactionDate;
+
+    const hasItemErrors = Object.values(validationErrors.items).some(
+      (itemError) =>
+        itemError.productId || itemError.quantity || itemError.unitPrice,
+    );
+
+    if (!hasHeaderErrors && !hasItemErrors) {
+      return null;
+    }
+
+    return validationErrors;
+  };
+
+  // =========================================================
+  // ADD ROW
+  // =========================================================
+
   const addRow = () => {
-    const lastItem = items[items.length - 1];
+    const validationErrors = validateForm();
 
-    // Validate the current row before adding another row
-    if (!lastItem.productId) {
-      setError("Please select a product before adding another row.");
+    if (validationErrors) {
+      setErrors(validationErrors);
+      setSuccess("");
       return;
     }
 
-    if (!lastItem.quantity || Number(lastItem.quantity) <= 0) {
-      setError("Please enter a valid quantity before adding another row.");
-      return;
-    }
-
-    if (!lastItem.unitPrice || Number(lastItem.unitPrice) <= 0) {
-      setError("Please enter a valid unit price before adding another row.");
-      return;
-    }
-
-    // Current row is valid, so allow a new row
-    setError("");
+    setErrors({});
 
     setItems((currentItems) => [
       ...currentItems,
@@ -106,19 +245,91 @@ function StockIn() {
     ]);
   };
 
+  // =========================================================
+  // CLEAR ROW
+  // =========================================================
+
+  const clearRow = (index) => {
+    setItems((currentItems) =>
+      currentItems.map((item, itemIndex) =>
+        itemIndex === index
+          ? {
+              productId: "",
+              quantity: "",
+              unitPrice: "",
+            }
+          : item,
+      ),
+    );
+
+    setErrors((currentErrors) => {
+      const updatedErrors = { ...currentErrors };
+
+      if (updatedErrors.items) {
+        updatedErrors.items = {
+          ...updatedErrors.items,
+          [index]: {
+            productId: "",
+            quantity: "",
+            unitPrice: "",
+          },
+        };
+      }
+
+      return updatedErrors;
+    });
+
+    setSuccess("");
+  };
+
+  // =========================================================
+  // REMOVE ROW
+  // =========================================================
+
   const removeRow = (index) => {
+    // If only one row exists,
+    // clear the row instead of deleting it.
     if (items.length === 1) {
+      clearRow(index);
       return;
     }
 
     setItems((currentItems) =>
       currentItems.filter((_, itemIndex) => itemIndex !== index),
     );
+
+    setErrors((currentErrors) => {
+      if (!currentErrors.items) {
+        return currentErrors;
+      }
+
+      const updatedItemErrors = {};
+
+      Object.entries(currentErrors.items).forEach(([itemIndex, itemError]) => {
+        const oldIndex = Number(itemIndex);
+
+        if (oldIndex < index) {
+          updatedItemErrors[oldIndex] = itemError;
+        } else if (oldIndex > index) {
+          updatedItemErrors[oldIndex - 1] = itemError;
+        }
+      });
+
+      return {
+        ...currentErrors,
+        items: updatedItemErrors,
+      };
+    });
+
+    setSuccess("");
   };
+
+  // =========================================================
+  // LINE TOTAL
+  // =========================================================
 
   const getLineTotal = (item) => {
     const quantity = Number(item.quantity) || 0;
-
     const unitPrice = Number(item.unitPrice) || 0;
 
     return quantity * unitPrice;
@@ -129,6 +340,10 @@ function StockIn() {
     0,
   );
 
+  // =========================================================
+  // FORMAT CURRENCY
+  // =========================================================
+
   const formatCurrency = (value) => {
     return `₹${Number(value || 0).toLocaleString("en-IN", {
       minimumFractionDigits: 2,
@@ -136,141 +351,73 @@ function StockIn() {
     })}`;
   };
 
+  // =========================================================
+  // SAVE STOCK IN
+  // =========================================================
+
   const handleSave = async () => {
+    setErrors({});
+    setSuccess("");
+
+    const validationErrors = validateForm();
+
+    if (validationErrors) {
+      setErrors(validationErrors);
+      return;
+    }
+
     try {
-      setError("");
-      setSuccess("");
-
-      /* =========================
-       Header Validation
-    ========================= */
-
-      if (!supplierId) {
-        setError("Please select a supplier.");
-        return;
-      }
-
-      if (!referenceNo.trim()) {
-        setError("Reference Number is required.");
-        return;
-      }
-
-      if (!transactionDate) {
-        setError("Transaction Date is required.");
-        return;
-      }
-
-      if (new Date(transactionDate) > new Date()) {
-        setError("Transaction Date cannot be in the future.");
-        return;
-      }
-
-      /* =========================
-       Validate EVERY Row
-    ========================= */
-
-      if (items.length === 0) {
-        setError("Please add at least one product.");
-        return;
-      }
-
-      for (let index = 0; index < items.length; index++) {
-        const item = items[index];
-
-        /* Product Validation */
-
-        if (!item.productId) {
-          setError(`Please select a product for row ${index + 1}.`);
-          return;
-        }
-
-        /* Quantity Validation */
-
-        const quantity = Number(item.quantity);
-
-        if (!Number.isInteger(quantity) || quantity <= 0) {
-          setError(
-            `Quantity should be greater than zero for row ${index + 1}.`,
-          );
-          return;
-        }
-
-        /* Unit Price Validation */
-
-        const unitPrice = Number(item.unitPrice);
-
-        if (!Number.isFinite(unitPrice) || unitPrice <= 0) {
-          setError(
-            `Unit Price should be greater than zero for row ${index + 1}.`,
-          );
-          return;
-        }
-      }
-
-      /* =========================
-       Duplicate Product Validation
-    ========================= */
-
-      const productIds = items.map((item) => item.productId);
-
-      const hasDuplicateProduct =
-        new Set(productIds).size !== productIds.length;
-
-      if (hasDuplicateProduct) {
-        setError("The same product cannot be added more than once.");
-        return;
-      }
-
-      /* =========================
-       Payload
-    ========================= */
+      setSaving(true);
 
       const payload = {
         supplierId,
-
         referenceNo: referenceNo.trim(),
-
         transactionDate: `${transactionDate}T00:00:00`,
-
         remarks: remarks.trim() || null,
 
         items: items.map((item) => ({
           productId: item.productId,
-
           quantity: Number(item.quantity),
-
           unitPrice: Number(item.unitPrice),
         })),
       };
 
-      /* =========================
-       Save
-    ========================= */
-
-      setSaving(true);
-
       const result = await createStockIn(payload);
 
-      /* =========================
-       Backend Validation
-    ========================= */
+      // =====================================================
+      // BACKEND VALIDATION
+      // =====================================================
 
       if (!result.success) {
-        setError(result.message || "Unable to save Stock In.");
+        const message = result.message || "Unable to save Stock In.";
+
+        if (
+          message.toLowerCase().includes("reference") &&
+          message.toLowerCase().includes("already")
+        ) {
+          setErrors({
+            referenceNo: message,
+          });
+        } else {
+          setErrors({
+            form: message,
+          });
+        }
+
         return;
       }
 
-      /* =========================
-       Success
-    ========================= */
+      // =====================================================
+      // SUCCESS
+      // =====================================================
 
       setSuccess(
         `Stock In completed successfully. Transaction: ${result.data.transactionNumber}`,
       );
 
-      /* =========================
-       Reset Form
-    ========================= */
+      // =====================================================
+      // RESET FORM
+      // =====================================================
 
       setSupplierId("");
       setReferenceNo("");
@@ -284,20 +431,42 @@ function StockIn() {
           unitPrice: "",
         },
       ]);
+
+      setErrors({});
     } catch (error) {
       console.error("Stock In save error:", error);
 
-      setError(
-        error.response?.data?.message || "Unable to connect to the server.",
-      );
+      const message =
+        error.response?.data?.message || "Unable to connect to the server.";
+
+      if (
+        message.toLowerCase().includes("reference") &&
+        message.toLowerCase().includes("already")
+      ) {
+        setErrors({
+          referenceNo: message,
+        });
+      } else {
+        setErrors({
+          form: message,
+        });
+      }
     } finally {
       setSaving(false);
     }
   };
 
+  // =========================================================
+  // CANCEL
+  // =========================================================
+
   const handleCancel = () => {
     navigate("/dashboard");
   };
+
+  // =========================================================
+  // LOADING
+  // =========================================================
 
   if (loading) {
     return (
@@ -309,42 +478,57 @@ function StockIn() {
     );
   }
 
+  // =========================================================
+  // UI
+  // =========================================================
+
   return (
     <div className="stockin-page">
       <div className="stockin-card">
-        {/* =========================
-                    CARD HEADER
-                ========================= */}
+        {/* =====================================================
+            HEADER
+        ===================================================== */}
 
         <div className="stockin-card-header">
           <h2>New Stock In (Purchase Entry)</h2>
         </div>
 
-        {/* =========================
-                    MESSAGES
-                ========================= */}
+        {/* =====================================================
+            FORM LEVEL ERROR
+        ===================================================== */}
 
-        {error && <div className="stockin-message stockin-error">{error}</div>}
-
-        {success && (
-          <div className="stockin-message stockin-success">{success}</div>
+        {errors.form && (
+          <div className="stockin-message stockin-error">
+            <i className="bi bi-exclamation-circle-fill"></i>
+            <span>{errors.form}</span>
+          </div>
         )}
 
-        {/* =========================
-                    BASIC INFORMATION
-                ========================= */}
+        {/* =====================================================
+            BASIC INFORMATION
+        ===================================================== */}
 
         <div className="stockin-basic-info">
-          {/* Supplier */}
+          {/* SUPPLIER */}
 
           <div className="stockin-field">
             <label>
-              Supplier <span>*</span>
+              Supplier <span className="required-star">*</span>
             </label>
 
             <select
+              className={errors.supplierId ? "stockin-invalid" : ""}
               value={supplierId}
-              onChange={(e) => setSupplierId(e.target.value)}
+              onChange={(e) => {
+                setSupplierId(e.target.value);
+
+                setErrors((currentErrors) => ({
+                  ...currentErrors,
+                  supplierId: "",
+                }));
+
+                setSuccess("");
+              }}
             >
               <option value="">Select Supplier</option>
 
@@ -354,61 +538,105 @@ function StockIn() {
                 </option>
               ))}
             </select>
+
+            {errors.supplierId && (
+              <span className="validation-message">{errors.supplierId}</span>
+            )}
           </div>
 
-          {/* Reference */}
+          {/* REFERENCE */}
 
           <div className="stockin-field">
-            <label>Reference / Invoice No</label>
+            <label>
+              Reference / Invoice No <span className="required-star">*</span>
+            </label>
 
             <input
               type="text"
+              className={errors.referenceNo ? "stockin-invalid" : ""}
               value={referenceNo}
-              onChange={(e) => setReferenceNo(e.target.value)}
-              placeholder="Enter reference number"
+              onChange={(e) => {
+                setReferenceNo(e.target.value);
+
+                setErrors((currentErrors) => ({
+                  ...currentErrors,
+                  referenceNo: "",
+                }));
+
+                setSuccess("");
+              }}
+              placeholder="Example: INV-2026-001"
               maxLength={50}
             />
+
+            <span className="field-hint">
+              Example: INV-2026-001 or PO/2026/001
+            </span>
+
+            {errors.referenceNo && (
+              <span className="validation-message">{errors.referenceNo}</span>
+            )}
           </div>
 
-          {/* Date */}
+          {/* DATE */}
 
           <div className="stockin-field">
-            <label>Date</label>
+            <label>
+              Date <span className="required-star">*</span>
+            </label>
 
             <input
               type="date"
+              className={errors.transactionDate ? "stockin-invalid" : ""}
               value={transactionDate}
               max={new Date().toISOString().split("T")[0]}
-              onChange={(e) => setTransactionDate(e.target.value)}
+              onChange={(e) => {
+                setTransactionDate(e.target.value);
+
+                setErrors((currentErrors) => ({
+                  ...currentErrors,
+                  transactionDate: "",
+                }));
+
+                setSuccess("");
+              }}
             />
+
+            {errors.transactionDate && (
+              <span className="validation-message">
+                {errors.transactionDate}
+              </span>
+            )}
           </div>
         </div>
 
-        {/* =========================
-                    ITEMS TABLE
-                ========================= */}
+        {/* =====================================================
+            ITEMS TABLE
+        ===================================================== */}
 
         <div className="stockin-table-wrapper">
           <table className="stockin-table">
             <colgroup>
               <col className="stockin-product-column" />
-
               <col className="stockin-quantity-column" />
-
               <col className="stockin-price-column" />
-
               <col className="stockin-total-column" />
-
               <col className="stockin-action-column" />
             </colgroup>
 
             <thead>
               <tr>
-                <th>PRODUCT</th>
+                <th>
+                  PRODUCT <span className="required-star">*</span>
+                </th>
 
-                <th className="center-header">QTY</th>
+                <th className="center-header">
+                  QTY <span className="required-star">*</span>
+                </th>
 
-                <th className="right-header">UNIT PRICE ₹</th>
+                <th className="right-header">
+                  UNIT PRICE ₹ <span className="required-star">*</span>
+                </th>
 
                 <th className="right-header">LINE TOTAL ₹</th>
 
@@ -417,99 +645,148 @@ function StockIn() {
             </thead>
 
             <tbody>
-              {items.map((item, index) => (
-                <tr key={index}>
-                  {/* Product */}
+              {items.map((item, index) => {
+                const itemErrors = errors.items?.[index] || {};
 
-                  <td>
-                    <select
-                      className="stockin-product-select"
-                      value={item.productId}
-                      onChange={(e) =>
-                        updateItem(index, "productId", e.target.value)
-                      }
-                    >
-                      <option value="">Select Product</option>
-                      {products.map((product) => {
-                        const alreadySelected = items.some(
-                          (item, itemIndex) =>
-                            itemIndex !== index &&
-                            item.productId === product.productId,
-                        );
+                return (
+                  <tr key={index}>
+                    {/* PRODUCT */}
 
-                        return (
-                          <option
-                            key={product.productId}
-                            value={product.productId}
-                            disabled={alreadySelected}
+                    <td>
+                      <select
+                        className={`stockin-product-select ${
+                          itemErrors.productId ? "stockin-invalid" : ""
+                        }`}
+                        value={item.productId}
+                        onChange={(e) =>
+                          updateItem(index, "productId", e.target.value)
+                        }
+                      >
+                        <option value="">Select Product</option>
+
+                        {products.map((product) => {
+                          const alreadySelected = items.some(
+                            (currentItem, itemIndex) =>
+                              itemIndex !== index &&
+                              currentItem.productId === product.productId,
+                          );
+
+                          return (
+                            <option
+                              key={product.productId}
+                              value={product.productId}
+                              disabled={alreadySelected}
+                            >
+                              {product.productCode} — {product.productName}
+                              {alreadySelected ? " (Already selected)" : ""}
+                            </option>
+                          );
+                        })}
+                      </select>
+
+                      {itemErrors.productId && (
+                        <span className="validation-message table-validation">
+                          {itemErrors.productId}
+                        </span>
+                      )}
+                    </td>
+
+                    {/* QUANTITY */}
+
+                    <td>
+                      <input
+                        className={`stockin-number-input quantity-input ${
+                          itemErrors.quantity ? "stockin-invalid" : ""
+                        }`}
+                        type="number"
+                        min="1"
+                        value={item.quantity}
+                        onChange={(e) =>
+                          updateItem(index, "quantity", e.target.value)
+                        }
+                        placeholder="0"
+                      />
+
+                      {itemErrors.quantity && (
+                        <span className="validation-message table-validation">
+                          {itemErrors.quantity}
+                        </span>
+                      )}
+                    </td>
+
+                    {/* UNIT PRICE */}
+
+                    <td>
+                      <input
+                        className={`stockin-number-input price-input ${
+                          itemErrors.unitPrice ? "stockin-invalid" : ""
+                        }`}
+                        type="number"
+                        min="0.01"
+                        step="0.01"
+                        value={item.unitPrice}
+                        onChange={(e) =>
+                          updateItem(index, "unitPrice", e.target.value)
+                        }
+                        placeholder="0.00"
+                      />
+
+                      {itemErrors.unitPrice && (
+                        <span className="validation-message table-validation">
+                          {itemErrors.unitPrice}
+                        </span>
+                      )}
+                    </td>
+
+                    {/* LINE TOTAL */}
+
+                    <td className="line-total-cell">
+                      <span className="mono-text">
+                        {formatCurrency(getLineTotal(item))}
+                      </span>
+                    </td>
+
+                    {/* =================================================
+                        ROW ACTIONS
+                        + ONLY ON FIRST / DEFAULT ROW
+                    ================================================= */}
+
+                    <td className="action-cell">
+                      <div className="row-actions">
+                        {/* PLUS ONLY FOR FIRST ROW */}
+
+                        {index === 0 && (
+                          <button
+                            type="button"
+                            className="add-row-icon-button"
+                            onClick={addRow}
+                            title="Add another row"
                           >
-                            {product.productCode} — {product.productName}
-                            {alreadySelected ? " (Already selected)" : ""}
-                          </option>
-                        );
-                      })}
-                    </select>
-                  </td>
+                            +
+                          </button>
+                        )}
 
-                  {/* Quantity */}
+                        {/* REMOVE / CLEAR */}
 
-                  <td>
-                    <input
-                      className="stockin-number-input quantity-input"
-                      type="number"
-                      min="1"
-                      value={item.quantity}
-                      onChange={(e) =>
-                        updateItem(index, "quantity", e.target.value)
-                      }
-                      placeholder="0"
-                    />
-                  </td>
-
-                  {/* Unit Price */}
-
-                  <td>
-                    <input
-                      className="stockin-number-input price-input"
-                      type="number"
-                      min="0.01"
-                      step="0.01"
-                      value={item.unitPrice}
-                      onChange={(e) =>
-                        updateItem(index, "unitPrice", e.target.value)
-                      }
-                      placeholder="0.00"
-                    />
-                  </td>
-
-                  {/* Line Total */}
-
-                  <td className="line-total-cell">
-                    <span className="mono-text">
-                      {formatCurrency(getLineTotal(item))}
-                    </span>
-                  </td>
-
-                  {/* Remove */}
-
-                  <td className="action-cell">
-                    <button
-                      type="button"
-                      className="remove-row-button"
-                      onClick={() => removeRow(index)}
-                      disabled={items.length === 1}
-                      title="Remove row"
-                    >
-                      ×
-                    </button>
-                  </td>
-                </tr>
-              ))}
+                        <button
+                          type="button"
+                          className="remove-row-button"
+                          onClick={() => removeRow(index)}
+                          title={
+                            items.length === 1 ? "Clear row" : "Remove row"
+                          }
+                          disabled={saving}
+                        >
+                          ×
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
 
-            {/* =========================
-                            GRAND TOTAL
-                        ========================= */}
+            {/* GRAND TOTAL */}
 
             <tfoot>
               <tr>
@@ -534,9 +811,9 @@ function StockIn() {
           </table>
         </div>
 
-        {/* =========================
-                    REMARKS
-                ========================= */}
+        {/* =====================================================
+            REMARKS
+        ===================================================== */}
 
         <div className="stockin-remarks">
           <div className="stockin-field">
@@ -547,20 +824,30 @@ function StockIn() {
               onChange={(e) => setRemarks(e.target.value)}
               maxLength={300}
               placeholder="Enter remarks (optional)"
-              rows={3}
+              rows={4}
             />
           </div>
         </div>
 
-        {/* =========================
-                    ACTIONS
-                ========================= */}
+        {/* =====================================================
+            SUCCESS MESSAGE
+            ABOVE SAVE BUTTONS
+        ===================================================== */}
+
+        {success && (
+          <div className="stockin-success">
+            <i className="bi bi-check-circle-fill"></i>
+
+            <span>{success}</span>
+          </div>
+        )}
+
+        {/* =====================================================
+            ACTION BUTTONS
+        ===================================================== */}
 
         <div className="stockin-actions">
-          <button type="button" className="add-row-button" onClick={addRow}>
-            <span>+</span>
-            Add Row
-          </button>
+          <div></div>
 
           <div className="stockin-right-actions">
             <button
