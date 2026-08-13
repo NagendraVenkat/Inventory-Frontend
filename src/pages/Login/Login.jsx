@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
+import { login } from "../../services/authService";
 import "./Login.css";
 
 function Login() {
@@ -30,6 +31,29 @@ if (response.success) {
     navigate("/dashboard");
   }, 300);
 }
+      const data = await login(email, password);
+
+      // Save login information
+      localStorage.setItem("token", data.data.token);
+      localStorage.setItem("userId", data.data.userId);
+      localStorage.setItem("fullName", data.data.fullName);
+      localStorage.setItem("email", data.data.email);
+      localStorage.setItem("role", data.data.role);
+
+      // Save complete user object
+      localStorage.setItem(
+        "user",
+        JSON.stringify(data.data)
+      );
+
+      console.log("Login successful:", data);
+
+      setMessage("Login successful!");
+
+      // Go to Dashboard
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 300);
 
     } catch (error) {
       console.error("Login failed:", error);
@@ -125,3 +149,6 @@ if (response.success) {
 }
 
 export default Login;
+
+
+

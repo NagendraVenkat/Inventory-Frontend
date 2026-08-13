@@ -10,7 +10,7 @@ import Categories from "../pages/Categories/Categories";
 import Suppliers from "../pages/Suppliers/Suppliers";
 import StockIn from "../pages/StockIn/StockIn";
 import StockOut from "../pages/StockOut/StockOut";
-import Adjustment from "../pages/Adjustment/Adjustment";
+import Adjustment from "../pages/Adjustment/StockAdjustment";
 import Users from "../pages/Users/Users";
 import TransactionDetail from "../pages/TransactionDetail/TransactionDetail";
 
@@ -37,6 +37,9 @@ function AppRoutes() {
           element={<Register />}
         />
 
+        <Route path="/login" element={<Login />} />
+
+        <Route path="/register" element={<Register />} />
 
         {/* =========================
             PROTECTED APPLICATION
@@ -46,6 +49,8 @@ function AppRoutes() {
 
           <Route element={<DashboardLayout />}>
 
+          <Route element={<DashboardLayout />}>
+            
             {/* =========================
                 ADMIN + STAFF + USER
             ========================= */}
@@ -70,6 +75,24 @@ function AppRoutes() {
               element={<Suppliers />}
             />
 
+
+            <Route path="/dashboard" element={<Dashboard />} />
+
+            <Route path="/products" element={<Products />} />
+
+            <Route path="/categories" element={<Categories />} />
+
+            <Route path="/suppliers" element={<Suppliers />} />
+
+            <Route
+              path="/transactions/:id"
+              element={<TransactionDetail />}
+            />
+
+            <Route
+              path="/change-password"
+              element={<ChangePassword />}
+            />
 
             {/* =========================
                 ADMIN + STAFF
@@ -96,6 +119,14 @@ function AppRoutes() {
             </Route>
 
 
+                <ProtectedRoute allowedRoles={["Admin", "Staff"]} />
+              }
+            >
+              <Route path="/stockin" element={<StockIn />} />
+
+              <Route path="/stockout" element={<StockOut />} />
+            </Route>
+
             {/* =========================
                 ADMIN ONLY
             ========================= */}
@@ -108,6 +139,9 @@ function AppRoutes() {
               }
             >
 
+                <ProtectedRoute allowedRoles={["Admin"]} />
+              }
+            >
               <Route
                 path="/adjustment"
                 element={<Adjustment />}
@@ -154,6 +188,28 @@ function AppRoutes() {
   }
 />
 
+            </Route>
+
+          </Route>
+        </Route>
+
+        {/* =========================
+            DEFAULT ROUTE
+        ========================= */}
+
+        <Route
+          path="/"
+          element={<Navigate to="/login" replace />}
+        />
+
+        {/* =========================
+            OPTIONAL 404 REDIRECT
+        ========================= */}
+
+        <Route
+          path="*"
+          element={<Navigate to="/login" replace />}
+        />
       </Routes>
 
     </BrowserRouter>

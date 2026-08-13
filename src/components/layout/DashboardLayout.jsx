@@ -2,17 +2,19 @@ import { Outlet } from "react-router-dom";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 
+import "./DashboardLayout.css";
+
 function DashboardLayout() {
   return (
-    <div className="d-flex">
+    <div className="app-layout">
       <Sidebar />
 
-      <div className="flex-grow-1">
+      <div className="main-content">
         <Navbar />
 
-        <div className="p-4">
+        <main className="page-content">
           <Outlet />
-        </div>
+        </main>
       </div>
     </div>
   );

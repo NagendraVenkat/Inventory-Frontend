@@ -1,0 +1,1202 @@
+/* =========================================================
+   DASHBOARD
+========================================================= */
+
+.dashboard-page {
+  width: 100%;
+  min-width: 0;
+}
+
+/* =========================================================
+   LOADING / ERROR
+========================================================= */
+
+.dashboard-state {
+  min-height: 300px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 16px;
+  color: #5c6b69;
+}
+
+.dashboard-state-error {
+  color: #b91c1c;
+}
+
+/* =========================================================
+   DASHBOARD HEADER
+========================================================= */
+
+.dashboard-header {
+  text-align: center;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  background: #ffffff;
+  border: 1px solid #dfe5e8;
+  border-radius: 12px;
+}
+
+.dashboard-header h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 500;
+  color: #34495e;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.dashboard-header p {
+  margin: 8px 0 0;
+  font-size: 15px;
+  color: #607080;
+}
+/* =========================================================
+   SUMMARY CARDS
+========================================================= */
+
+.summary-grid {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  gap: 20px;
+
+  margin-bottom: 26px;
+}
+
+.summary-card {
+  min-width: 0;
+
+  background: #ffffff;
+
+  border: 1px solid #e1e7e5;
+
+  border-radius: 14px;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+  overflow: hidden;
+}
+
+.summary-card-content {
+  min-width: 0;
+
+  padding: 22px;
+}
+
+/* =========================================================
+   CARD HEADING
+========================================================= */
+
+.summary-card-title {
+  margin: 0 0 14px;
+
+  font-size: 15px;
+  line-height: 1.35;
+
+  font-weight: 600;
+
+  color: #52656d;
+
+  letter-spacing: 0.8px;
+}
+
+/* =========================================================
+   CARD MAIN VALUE
+========================================================= */
+
+.summary-card-value {
+  margin: 0;
+
+  min-width: 0;
+
+  font-family: "JetBrains Mono", Consolas, monospace;
+
+  font-size: clamp(27px, 2.4vw, 36px);
+
+  line-height: 1.15;
+
+  font-weight: 500;
+
+  color: #1c2b2a;
+
+  letter-spacing: -0.8px;
+
+  overflow-wrap: anywhere;
+
+  word-break: normal;
+}
+
+/* =========================================================
+   STOCK VALUE
+========================================================= */
+
+.stock-value {
+  font-size: clamp(22px, 2.2vw, 34px);
+
+  letter-spacing: -1px;
+}
+
+/* =========================================================
+   WARNING NUMBER
+========================================================= */
+
+.summary-card-warning {
+  color: #b45309;
+}
+
+/* =========================================================
+   SUBTITLE
+========================================================= */
+
+.summary-card-subtitle {
+  margin: 12px 0 0;
+
+  font-size: 15px;
+
+  line-height: 1.4;
+
+  color: #5c6b69;
+}
+
+/* =========================================================
+   TABLE CARDS
+========================================================= */
+
+.dashboard-tables-grid {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(0, 1fr);
+
+  gap: 20px;
+
+  align-items: stretch;
+}
+
+.dashboard-card {
+  min-width: 0;
+
+  background: #ffffff;
+
+  border: 1px solid #e1e7e5;
+
+  border-radius: 14px;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+  overflow: hidden;
+}
+
+/* =========================================================
+   TABLE CARD HEADER
+========================================================= */
+
+.dashboard-card-header {
+  padding: 22px 22px 18px;
+
+  background: #ffffff;
+}
+
+.dashboard-card-heading {
+  min-width: 0;
+}
+
+.dashboard-card-heading h2 {
+  margin: 0;
+
+  font-size: 19px;
+
+  line-height: 1.35;
+
+  font-weight: 600;
+
+  color: #17252d;
+}
+
+.dashboard-card-heading p {
+  margin: 7px 0 0;
+
+  font-size: 14px;
+
+  line-height: 1.4;
+
+  color: #5c6b69;
+}
+
+/* =========================================================
+   WARNING ICON
+========================================================= */
+
+.alert-icon {
+  display: inline-block;
+
+  margin-right: 7px;
+
+  color: #b45309;
+
+  font-size: 20px;
+}
+
+/* =========================================================
+   TABLE SCROLL
+========================================================= */
+
+.table-scroll {
+  width: 100%;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  scrollbar-width: thin;
+}
+
+/* =========================================================
+   COMMON TABLE
+========================================================= */
+
+.dashboard-table {
+  width: 100%;
+
+  border-collapse: collapse;
+
+  table-layout: fixed;
+
+  color: #1c2b2a;
+}
+
+.dashboard-table th,
+.dashboard-table td {
+  border-bottom: 1px solid #e7ecea;
+}
+
+/* =========================================================
+   TABLE HEADER
+========================================================= */
+
+.dashboard-table thead {
+  background: #f7faf9;
+}
+
+.dashboard-table th {
+  height: 46px;
+
+  padding: 0 14px;
+
+  font-size: 12px;
+
+  line-height: 1.3;
+
+  font-weight: 600;
+
+  color: #596d75;
+
+  letter-spacing: 0.8px;
+
+  text-align: left;
+
+  white-space: nowrap;
+}
+
+/* Center headers */
+
+.dashboard-table th.center-header {
+  text-align: center;
+}
+
+/* Right headers */
+
+.dashboard-table th.right-header {
+  text-align: right;
+}
+
+/* =========================================================
+   TABLE BODY
+========================================================= */
+
+.dashboard-table td {
+  height: 58px;
+
+  padding: 8px 14px;
+
+  font-size: 14px;
+
+  line-height: 1.35;
+
+  vertical-align: middle;
+}
+
+/* =========================================================
+   LOW STOCK TABLE
+========================================================= */
+
+.low-stock-table {
+  min-width: 570px;
+}
+
+.low-code-column {
+  width: 17%;
+}
+
+.low-product-column {
+  width: 32%;
+}
+
+.low-stock-column {
+  width: 15%;
+}
+
+.low-reorder-column {
+  width: 18%;
+}
+
+.low-status-column {
+  width: 18%;
+}
+
+/* =========================================================
+   PRODUCT
+========================================================= */
+
+.product-name {
+  display: block;
+
+  font-size: 14px;
+
+  font-weight: 500;
+
+  color: #1c2b2a;
+
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   PRODUCT CODE
+========================================================= */
+
+.product-code {
+  font-size: 13px;
+}
+
+/* =========================================================
+   COMMON MONOSPACE
+========================================================= */
+
+.mono-text {
+  font-family: "JetBrains Mono", Consolas, monospace;
+}
+
+/* =========================================================
+   CENTER / RIGHT CELLS
+========================================================= */
+
+.center-cell {
+  text-align: center !important;
+}
+
+.right-cell {
+  text-align: right !important;
+}
+
+/* =========================================================
+   STATUS BADGES
+========================================================= */
+
+.status-badge {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-width: 52px;
+  min-height: 28px;
+
+  padding: 5px 12px;
+
+  border-radius: 999px;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  line-height: 1.2;
+
+  white-space: nowrap;
+}
+
+/* Stock = 0 */
+
+.status-danger {
+  background-color: #fee2e2;
+
+  color: #b91c1c;
+}
+
+/* Stock > 0 and <= reorder level */
+
+.status-warning {
+  background-color: #fef3c7;
+
+  color: #b45309;
+}
+
+/* Out of Stock */
+
+.status-out {
+  min-width: 78px;
+
+  color: #b45309;
+
+  background: #fff1c7;
+}
+
+/* Low */
+
+.status-low {
+  min-width: 48px;
+
+  color: #b45309;
+
+  background: #fff1c7;
+}
+
+/* =========================================================
+   RECENT TRANSACTIONS
+========================================================= */
+
+.transactions-table {
+  min-width: 620px;
+}
+
+/* =========================================================
+   TRANSACTION COLUMNS
+========================================================= */
+
+.transaction-number-column {
+  width: 37%;
+}
+
+.transaction-type-column {
+  width: 18%;
+}
+
+.transaction-date-column {
+  width: 25%;
+}
+
+.transaction-total-column {
+  width: 20%;
+}
+
+/* =========================================================
+   TRANSACTION NUMBER
+========================================================= */
+
+.transaction-number {
+  display: block;
+
+  font-size: 12.5px;
+
+  line-height: 1.25;
+
+  font-weight: 500;
+
+  color: #1c2b2a;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+}
+
+/* =========================================================
+   TRANSACTION DATE
+========================================================= */
+
+.transaction-date {
+  display: block;
+
+  font-size: 13px;
+
+  white-space: nowrap;
+
+  color: #26363d;
+}
+
+/* =========================================================
+   TRANSACTION TOTAL
+========================================================= */
+
+.transaction-total {
+  display: block;
+
+  font-size: 13px;
+
+  font-weight: 500;
+
+  color: #26363d;
+
+  white-space: nowrap;
+}
+
+/* =========================================================
+   TRANSACTION BADGES
+========================================================= */
+
+.transaction-chip {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-width: 45px;
+  min-height: 26px;
+
+  padding: 4px 10px;
+
+  border-radius: 999px;
+
+  font-size: 12px;
+
+  line-height: 1;
+
+  font-weight: 600;
+
+  text-align: center;
+
+  white-space: nowrap;
+}
+
+/* IN */
+
+.transaction-in {
+  color: #15803d;
+
+  background: #d9f7e5;
+}
+
+/* OUT */
+
+.transaction-out {
+  color: #b91c1c;
+
+  background: #ffe0e0;
+}
+
+/* ADJUST */
+
+.transaction-adjust {
+  color: #b45309;
+
+  background: #fff0bf;
+
+  min-width: 68px;
+}
+
+/* =========================================================
+   CLICKABLE ROW
+========================================================= */
+
+.clickable-row {
+  cursor: pointer;
+
+  transition: background-color 0.15s ease;
+}
+
+.clickable-row:hover {
+  background-color: #f8faf9;
+}
+
+/* =========================================================
+   EMPTY TABLE
+========================================================= */
+
+.empty-table-message {
+  height: 100px !important;
+
+  text-align: center !important;
+
+  color: #71807e !important;
+
+  font-size: 14px !important;
+}
+
+/* =========================================================
+   RECENT TRANSACTIONS PAGINATION
+========================================================= */
+
+.transaction-pagination {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 14px;
+
+  padding: 14px 16px;
+
+  border-top: 1px solid #e7ecea;
+
+  background: #ffffff;
+}
+
+/* =========================================================
+   PAGINATION INFORMATION
+========================================================= */
+
+.transaction-pagination-info {
+  color: #5c6b69;
+
+  font-size: 13px;
+
+  line-height: 1.4;
+
+  white-space: nowrap;
+}
+
+/* =========================================================
+   PAGINATION BUTTONS CONTAINER
+========================================================= */
+
+.transaction-pagination-buttons {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+}
+
+/* =========================================================
+   PAGINATION BUTTON
+========================================================= */
+
+.transaction-pagination-button {
+  min-width: 82px;
+
+  height: 36px;
+
+  padding: 0 15px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border: 1px solid #d3ddda;
+
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #26363d;
+
+  font-family: inherit;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+}
+
+/* =========================================================
+   PAGINATION BUTTON HOVER
+========================================================= */
+
+.transaction-pagination-button:hover:not(:disabled) {
+  background-color: #f0fdfa;
+
+  border-color: #0d9488;
+
+  color: #0f766e;
+
+  box-shadow: 0 2px 5px rgba(13, 148, 136, 0.12);
+
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   PAGINATION BUTTON ACTIVE
+========================================================= */
+
+.transaction-pagination-button:active:not(:disabled) {
+  transform: translateY(0);
+
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* =========================================================
+   DISABLED PAGINATION BUTTON
+========================================================= */
+
+.transaction-pagination-button:disabled {
+  opacity: 0.45;
+
+  cursor: not-allowed;
+
+  background-color: #f5f7f6;
+
+  border-color: #e0e6e4;
+
+  color: #899593;
+
+  box-shadow: none;
+}
+
+/* =========================================================
+   CURRENT PAGE
+========================================================= */
+
+.transaction-pagination-page {
+  min-width: 38px;
+
+  height: 36px;
+
+  padding: 0 10px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border: 1px solid #0d9488;
+
+  border-radius: 8px;
+
+  background-color: #0d9488;
+
+  color: #ffffff;
+
+  font-family: "JetBrains Mono", Consolas, monospace;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  box-shadow: 0 2px 5px rgba(13, 148, 136, 0.18);
+}
+
+/* =========================================================
+   TABLE SCROLLBAR
+========================================================= */
+
+.table-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+
+.table-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.table-scroll::-webkit-scrollbar-thumb {
+  background: #c8d3d1;
+
+  border-radius: 10px;
+}
+
+/* =========================================================
+   LARGE TABLET
+   1100px
+========================================================= */
+
+@media (max-width: 1100px) {
+  .summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 18px;
+
+    margin-bottom: 22px;
+  }
+
+  .summary-card-content {
+    padding: 20px;
+  }
+
+  .summary-card-title {
+    font-size: 14px;
+  }
+
+  .summary-card-value {
+    font-size: clamp(25px, 4vw, 32px);
+  }
+
+  .stock-value {
+    font-size: clamp(21px, 3.5vw, 30px);
+  }
+
+  .dashboard-tables-grid {
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(0, 1fr);
+
+    gap: 18px;
+  }
+
+  .dashboard-card-header {
+    padding: 20px 18px 16px;
+  }
+
+  .dashboard-card-heading h2 {
+    font-size: 18px;
+  }
+
+  .dashboard-table th {
+    padding-left: 12px;
+
+    padding-right: 12px;
+  }
+
+  .dashboard-table td {
+    padding-left: 12px;
+
+    padding-right: 12px;
+  }
+}
+
+/* =========================================================
+   TABLET / SMALL LAPTOP
+   900px
+========================================================= */
+
+@media (max-width: 900px) {
+  .dashboard-tables-grid {
+    grid-template-columns: 1fr;
+
+    gap: 18px;
+  }
+
+  .dashboard-card {
+    width: 100%;
+  }
+
+  .dashboard-card-header {
+    padding: 20px;
+  }
+
+  .low-stock-table {
+    min-width: 570px;
+  }
+
+  .transactions-table {
+    min-width: 620px;
+  }
+}
+
+/* =========================================================
+   MOBILE
+   600px
+========================================================= */
+
+@media (max-width: 600px) {
+  .summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 12px;
+
+    margin-bottom: 16px;
+  }
+
+  .summary-card {
+    border-radius: 11px;
+  }
+
+  .summary-card-content {
+    padding: 16px;
+  }
+
+  .summary-card-title {
+    margin-bottom: 10px;
+
+    font-size: 12px;
+
+    letter-spacing: 0.5px;
+  }
+
+  .summary-card-value {
+    font-size: 25px;
+
+    letter-spacing: -0.5px;
+  }
+
+  .stock-value {
+    font-size: 20px;
+
+    letter-spacing: -0.7px;
+  }
+
+  .summary-card-subtitle {
+    margin-top: 8px;
+
+    font-size: 12px;
+  }
+
+  .dashboard-tables-grid {
+    gap: 14px;
+  }
+
+  .dashboard-card {
+    border-radius: 11px;
+  }
+
+  .dashboard-card-header {
+    padding: 17px 16px 15px;
+  }
+
+  .dashboard-card-heading h2 {
+    font-size: 17px;
+  }
+
+  .dashboard-card-heading p {
+    margin-top: 6px;
+
+    font-size: 13px;
+  }
+
+  .alert-icon {
+    font-size: 18px;
+
+    margin-right: 5px;
+  }
+
+  .low-stock-table {
+    min-width: 570px;
+  }
+
+  .transactions-table {
+    min-width: 620px;
+  }
+
+  .dashboard-table th {
+    height: 44px;
+
+    padding: 0 11px;
+
+    font-size: 11px;
+  }
+
+  .dashboard-table td {
+    height: 56px;
+
+    padding: 7px 11px;
+
+    font-size: 13px;
+  }
+
+  .transaction-number {
+    font-size: 12px;
+  }
+
+  .transaction-date {
+    font-size: 12px;
+  }
+
+  .transaction-total {
+    font-size: 12px;
+  }
+
+  .status-badge {
+    font-size: 11px;
+
+    padding: 5px 9px;
+  }
+
+  /* =======================================================
+     PAGINATION MOBILE
+  ======================================================= */
+
+  .transaction-pagination {
+    padding: 12px 14px;
+
+    gap: 10px;
+  }
+
+  .transaction-pagination-info {
+    font-size: 12px;
+  }
+
+  .transaction-pagination-button {
+    min-width: 72px;
+
+    height: 34px;
+
+    padding: 0 11px;
+
+    font-size: 12px;
+  }
+
+  .transaction-pagination-page {
+    min-width: 34px;
+
+    height: 34px;
+
+    font-size: 12px;
+  }
+}
+
+/* =========================================================
+   VERY SMALL MOBILE
+   420px
+========================================================= */
+
+@media (max-width: 420px) {
+  .summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 10px;
+  }
+
+  .summary-card-content {
+    padding: 13px;
+  }
+
+  .summary-card-title {
+    font-size: 11px;
+
+    line-height: 1.3;
+  }
+
+  .summary-card-value {
+    font-size: 22px;
+  }
+
+  .stock-value {
+    font-size: 18px;
+
+    letter-spacing: -0.8px;
+  }
+
+  .summary-card-subtitle {
+    font-size: 11px;
+
+    line-height: 1.35;
+  }
+
+  .dashboard-card-header {
+    padding: 15px 14px 14px;
+  }
+
+  .dashboard-card-heading h2 {
+    font-size: 16px;
+  }
+
+  .dashboard-card-heading p {
+    font-size: 12px;
+  }
+
+  /* =======================================================
+     VERY SMALL MOBILE PAGINATION
+  ======================================================= */
+
+  .transaction-pagination {
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 10px;
+  }
+
+  .transaction-pagination-info {
+    text-align: center;
+  }
+
+  .transaction-pagination-buttons {
+    justify-content: center;
+
+    gap: 8px;
+  }
+
+  .transaction-pagination-button {
+    flex: 1;
+
+    max-width: 110px;
+  }
+
+  .transaction-pagination-page {
+    min-width: 34px;
+  }
+}
+
+/* =========================================================
+   STOCK COLUMN HEADER
+========================================================= */
+
+.low-stock-table th:nth-child(3) {
+  text-align: center !important;
+
+  padding-left: 0;
+
+  padding-right: 12px;
+}
+
+/* =========================================================
+   REORDER LEVEL COLUMN HEADER
+========================================================= */
+
+.low-stock-table th:nth-child(4) {
+  text-align: center !important;
+
+  padding-left: 0;
+
+  padding-right: 12px;
+}
+
+/* =========================================================
+   STOCK AND REORDER VALUES
+========================================================= */
+
+.low-stock-table td:nth-child(3),
+.low-stock-table td:nth-child(4) {
+  text-align: center !important;
+}
+/* =========================================================
+   TRANSACTION TABLE LOADING
+========================================================= */
+
+.transaction-loading-message {
+  height: 290px !important;
+
+  text-align: center !important;
+
+  color: #71807e !important;
+
+  font-size: 14px !important;
+
+  font-weight: 500 !important;
+}
+
+.today-transaction-breakdown {
+  font-weight: 500;
+}
+
+.today-in {
+  color: #198754;
+}
+
+.today-out {
+  color: #dc3545;
+}
+
+.today-adjust {
+  color: #fd7e14;
+}
