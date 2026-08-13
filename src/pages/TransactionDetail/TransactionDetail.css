@@ -1,0 +1,610 @@
+/* =========================
+Transaction Detail
+========================= */
+
+.transaction-detail-page {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* =========================
+Back Button
+========================= */
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  border: 1px solid var(--border);
+  background-color: var(--white);
+  color: var(--text);
+
+  padding: 9px 14px;
+  border-radius: 7px;
+
+  font-size: 13px;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.back-button:hover {
+  background-color: #f8faf9;
+  border-color: #cbd8d5;
+}
+
+/* =========================
+Transaction Information
+========================= */
+
+.transaction-info-card {
+  background-color: var(--white);
+
+  border: 1px solid var(--border);
+  border-radius: 10px;
+
+  box-shadow: 0 2px 6px rgba(28, 43, 42, 0.06);
+
+  margin-bottom: 20px;
+
+  overflow: hidden;
+}
+
+/* =========================
+Transaction Header
+========================= */
+
+.transaction-info-header {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr 1fr;
+
+  align-items: center;
+
+  gap: 20px;
+
+  padding: 20px 24px;
+
+  border-bottom: 1px solid var(--border);
+}
+
+/* Left Side */
+
+.transaction-header-left {
+  min-width: 0;
+}
+
+/* Center */
+
+.transaction-type-container {
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+}
+
+/* Right Side */
+
+.transaction-header-right {
+  display: flex;
+
+  justify-content: flex-end;
+  align-items: center;
+}
+
+/* =========================
+Transaction Label
+========================= */
+
+.transaction-label {
+  display: block;
+
+  margin-bottom: 6px;
+
+  color: var(--text-secondary);
+
+  font-size: 11px;
+  font-weight: 600;
+
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+/* =========================
+Transaction Number
+========================= */
+
+.transaction-number {
+  margin: 0;
+
+  color: var(--text);
+
+  font-family: var(--font-mono);
+
+  font-size: 18px;
+  font-weight: 600;
+
+  overflow-wrap: anywhere;
+}
+
+/* =========================
+Transaction Type Badge
+========================= */
+
+.transaction-type-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 48px;
+  padding: 6px 12px;
+
+  border-radius: 999px;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* =========================
+IN - Green
+========================= */
+
+.transaction-type-in {
+  color: var(--success);
+  background-color: #dcfce7;
+}
+
+/* =========================
+OUT - Red
+========================= */
+
+.transaction-type-out {
+  color: var(--danger);
+  background-color: #fee2e2;
+}
+
+/* =========================
+ADJ - Orange
+========================= */
+
+.transaction-type-adj {
+  display: inline-flex;
+
+  color: var(--warning);
+  background-color: #fef3c7;
+
+  min-width: 48px;
+  padding: 6px 12px;
+
+  border-radius: 999px;
+
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+/* =========================
+   Transaction Info Grid
+========================= */
+
+.transaction-info-grid {
+  display: grid;
+
+  /*
+     * Automatically distributes the available
+     * fields across the row.
+     *
+     * Stock In  -> 4 columns
+     * Stock Out -> 3 columns
+     * Adjustment -> 2 columns
+     */
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  column-gap: 40px;
+  row-gap: 20px;
+
+  padding: 20px 24px;
+}
+
+.transaction-info-item {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.transaction-info-value {
+  display: block;
+
+  color: var(--text);
+
+  font-size: 14px;
+  font-weight: 500;
+
+  overflow-wrap: anywhere;
+}
+.mono-text {
+  font-family: var(--font-mono);
+}
+
+/* =========================
+Items Card
+========================= */
+
+.transaction-items-card {
+  background-color: var(--white);
+
+  border: 1px solid var(--border);
+  border-radius: 10px;
+
+  box-shadow: 0 2px 6px rgba(28, 43, 42, 0.06);
+
+  overflow: hidden;
+}
+
+/* =========================
+Items Card Header
+========================= */
+
+.transaction-card-header {
+  min-height: 76px;
+
+  display: flex;
+
+  align-items: center;
+
+  padding: 16px 24px;
+
+  border-bottom: 1px solid var(--border);
+}
+
+.transaction-card-header h2 {
+  margin: 0 0 4px;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  color: var(--text);
+}
+
+.transaction-card-header p {
+  margin: 0;
+
+  color: var(--text-secondary);
+
+  font-size: 12px;
+}
+
+/* =========================
+Items Table
+========================= */
+
+.transaction-table-wrapper {
+  width: 100%;
+
+  overflow-x: auto;
+}
+
+.transaction-detail-table {
+  width: 100%;
+
+  min-width: 700px;
+
+  table-layout: fixed;
+
+  border-collapse: collapse;
+}
+
+/* =========================
+Table Column Widths
+========================= */
+
+.detail-product-column {
+  width: 30%;
+}
+
+.detail-code-column {
+  width: 18%;
+}
+
+.detail-quantity-column {
+  width: 15%;
+}
+
+.detail-price-column {
+  width: 18%;
+}
+
+.detail-total-column {
+  width: 19%;
+}
+
+/* =========================
+Table Cells
+========================= */
+
+.transaction-detail-table th,
+.transaction-detail-table td {
+  padding: 13px 20px;
+
+  border-bottom: 1px solid var(--border);
+
+  text-align: left;
+}
+
+/* Table Header */
+
+.transaction-detail-table th {
+  background-color: #f8faf9;
+
+  color: var(--text-secondary);
+
+  font-size: 11px;
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+/* Table Data */
+
+.transaction-detail-table td {
+  font-size: 13px;
+}
+
+/* Hover */
+
+.transaction-detail-table tbody tr:hover {
+  background-color: #f8faf9;
+}
+
+/* Last Row */
+
+.transaction-detail-table tbody tr:last-child td {
+  border-bottom: 1px solid var(--border);
+}
+
+/* =========================
+Product / Code
+========================= */
+
+.detail-product-name {
+  color: var(--text);
+
+  font-weight: 500;
+}
+
+.detail-code {
+  color: var(--text-secondary);
+
+  font-size: 12px;
+}
+
+/* =========================
+Numeric Columns
+========================= */
+
+.detail-number-header,
+.detail-number-cell {
+  text-align: right !important;
+}
+
+/* Product column */
+.transaction-detail-table th:nth-child(1),
+.transaction-detail-table td:nth-child(1) {
+  text-align: left !important;
+}
+
+/* Code column - center header and values */
+.transaction-detail-table th:nth-child(2),
+.transaction-detail-table td:nth-child(2) {
+  text-align: center !important;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+/* Quantity column - center */
+.transaction-detail-table th:nth-child(3),
+.transaction-detail-table td:nth-child(3) {
+  text-align: center !important;
+}
+
+/* Unit Price column - center */
+.transaction-detail-table th:nth-child(4),
+.transaction-detail-table td:nth-child(4) {
+  text-align: center !important;
+}
+
+/* Line Total column - right */
+.transaction-detail-table th:nth-child(5),
+.transaction-detail-table td:nth-child(5) {
+  text-align: right !important;
+}
+.detail-line-total,
+.grand-total-value {
+  font-weight: 600;
+}
+
+/* =========================
+Grand Total
+========================= */
+
+.transaction-detail-table tfoot td {
+  background-color: #f8faf9;
+
+  border-bottom: none;
+
+  font-weight: 600;
+}
+
+/* Grand Total Label */
+
+.grand-total-label {
+  text-align: right !important;
+
+  color: var(--text);
+}
+
+/* Grand Total Quantity */
+
+.grand-total-quantity {
+  color: var(--text);
+
+  font-size: 14px;
+}
+
+/* Grand Total Amount */
+
+.grand-total-value {
+  color: var(--primary);
+
+  font-size: 14px;
+}
+
+/* =========================
+Grand Total Alignment
+========================= */
+
+.grand-total-label {
+  text-align: left !important;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.grand-total-quantity {
+  text-align: center !important;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.grand-total-unit-price {
+  text-align: right !important;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.grand-total-value {
+  text-align: right !important;
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* =========================
+Read-only Information
+========================= */
+
+.transaction-readonly-row td {
+  padding: 10px 20px;
+
+  background-color: #f8faf9;
+
+  border-top: 1px solid var(--border);
+  border-bottom: none;
+
+  color: var(--text-secondary);
+
+  font-size: 11px;
+  font-weight: 400;
+
+  text-align: left !important;
+}
+
+/* =========================
+   Desktop
+========================= */
+
+.transaction-info-grid {
+  display: grid;
+
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  column-gap: 40px;
+  row-gap: 20px;
+
+  padding: 20px 24px;
+}
+
+/* =========================
+   Tablet / Minimized
+========================= */
+
+@media (max-width: 900px) {
+  .transaction-info-header {
+    grid-template-columns: 1fr auto 1fr;
+    gap: 14px;
+    padding: 18px 20px;
+  }
+
+  .transaction-info-grid {
+    /* 2 columns × 2 rows */
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    column-gap: 28px;
+    row-gap: 20px;
+
+    padding: 20px;
+  }
+}
+
+/* =========================
+   Mobile
+========================= */
+
+@media (max-width: 600px) {
+  .transaction-info-header {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 18px;
+  }
+
+  .transaction-header-left {
+    text-align: left;
+  }
+
+  .transaction-type-container {
+    justify-content: flex-start;
+  }
+
+  .transaction-header-right {
+    justify-content: flex-start;
+  }
+
+  .back-button {
+    width: auto;
+  }
+
+  .transaction-number {
+    font-size: 16px;
+  }
+
+  .transaction-info-grid {
+    /* Still keep 2 × 2 */
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    column-gap: 18px;
+    row-gap: 18px;
+
+    padding: 18px;
+  }
+
+  .transaction-card-header {
+    padding: 16px 18px;
+  }
+
+  .transaction-detail-table th,
+  .transaction-detail-table td {
+    padding: 11px 14px;
+  }
+}
