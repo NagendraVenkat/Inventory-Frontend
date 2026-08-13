@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import api from "../../services/api";
 import "./Users.css";
 
@@ -7,30 +9,83 @@ function Users() {
   const [showForm, setShowForm] = useState(false);
   const [editUserId, setEditUserId] = useState(null);
 
-  const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    role: "User",
-  });
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 5;
 
-  // =========================
-  // CHANGE PASSWORD
-  // =========================
-
-  const [passwordData, setPasswordData] = useState({
-    oldPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  });
 
   const [passwordMessage, setPasswordMessage] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
   // =========================
-  // GET ALL USERS
+  // TOAST NOTIFICATIONS
   // =========================
+
+  const [toast, setToast] = useState(null); // { type: "success" | "error", message: string }
+
+  const showToast = (type, message) => {
+    setToast({ type, message });
+  };
+
+  useEffect(() => {
+    if (!toast) return;
+
+    const timer = setTimeout(() => setToast(null), 3500);
+    return () => clearTimeout(timer);
+  }, [toast]);
+
+  // =========================
+  // DEACTIVATE CONFIRM DIALOG
+  // =========================
+
+  const [confirmDialog, setConfirmDialog] = useState({
+    open: false,
+    user: null,
+  });
+
+  // =========================
+  // REAL-TIME EMAIL DUPLICATE CHECK
+  // =========================
+
+  const [emailCheck, setEmailCheck] = useState({
+    checking: false,
+    exists: false,
+  });
+
+  const emailCheckTimer = useRef(null);
+
+  const checkEmailAvailability = (email, currentUserId) => {
+    if (emailCheckTimer.current) {
+      clearTimeout(emailCheckTimer.current);
+    }
+
+    const trimmedEmail = (email || "").trim().toLowerCase();
+
+    if (!trimmedEmail) {
+      setEmailCheck({ checking: false, exists: false });
+      return;
+    }
+
+    setEmailCheck({ checking: true, exists: false });
+
+    // Simulated real-time lookup against already-loaded users (~0.8s)
+    emailCheckTimer.current = setTimeout(() => {
+      const isDuplicate = users.some(
+        (u) =>
+          String(u.email || "").trim().toLowerCase() === trimmedEmail &&
+          String(u.userId) !== String(currentUserId)
+      );
+
+      setEmailCheck({ checking: false, exists: isDuplicate });
+    }, 800);
+  };
+
+  const resetEmailCheck = () => {
+    if (emailCheckTimer.current) {
+      clearTimeout(emailCheckTimer.current);
+    }
+    setEmailCheck({ checking: false, exists: false });
+  };
+
 
   const getUsers = async () => {
     try {
@@ -49,89 +104,106 @@ function Users() {
   }, []);
 
   // =========================
-  // HANDLE USER FORM CHANGE
+  // VALIDATION HELPER
   // =========================
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const showError = (form, field) =>
+    (form.touched[field] || form.submitCount > 0) && form.errors[field];
 
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
+  // =========================
+  // USER FORM VALIDATION SCHEMAS
+  // =========================
+
+  const nameRules = Yup.string()
+    .trim()
+    .min(3, "Full name must be at least 3 characters")
+    .max(50, "Full name must not exceed 50 characters")
+    .matches(/^[A-Za-z\s'-]+$/, "Full name can only contain letters, spaces, - and '")
+    .required("Full name is required");
+
+  const emailRules = Yup.string()
+    .trim()
+    .email("Enter a valid email address")
+    .max(100, "Email must not exceed 100 characters")
+    .required("Email is required");
+
+  const roleRules = Yup.string()
+    .oneOf(["User", "Staff", "Admin"], "Select a valid role")
+    .required("Role is required");
+
+  const createUserSchema = Yup.object({
+    fullName: nameRules,
+    email: emailRules,
+    password: Yup.string()
+      .min(6, "Password must be at least 6 characters")
+      .matches(/[A-Za-z]/, "Password must contain at least one letter")
+      .matches(/[0-9]/, "Password must contain at least one number")
+      .required("Password is required"),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("password")], "Passwords do not match")
+      .required("Confirm password is required"),
+    role: roleRules,
+  });
+
+  const editUserSchema = Yup.object({
+    fullName: nameRules,
+    email: emailRules,
+    role: roleRules,
+  });
 
   // =========================
   // CREATE USER
   // =========================
 
-  const handleCreateUser = async (e) => {
-    e.preventDefault();
-
-    if (formData.password !== formData.confirmPassword) {
-      alert("Password and Confirm Password do not match.");
+  const handleCreateUser = async (values, { resetForm, setFieldTouched }) => {
+    if (emailCheck.checking || emailCheck.exists) {
+      setFieldTouched("email", true);
       return;
     }
 
     try {
       const response = await api.post("/User", {
-        fullName: formData.fullName,
-        email: formData.email,
-        password: formData.password,
-        confirmPassword: formData.confirmPassword,
-        role: formData.role,
+        fullName: values.fullName,
+        email: values.email,
+        password: values.password,
+        confirmPassword: values.confirmPassword,
+        role: values.role,
       });
 
       console.log("User created:", response.data);
 
-      alert("User created successfully!");
+      showToast("success", "User created successfully!");
 
       resetForm();
+      setEditUserId(null);
+      setShowForm(false);
 
       await getUsers();
     } catch (error) {
       console.error("Failed to create user:", error);
 
-      alert(
-        error.response?.data?.message ||
-          "Failed to create user."
+      showToast(
+        "error",
+        error.response?.data?.message || "Failed to create user."
       );
     }
-  };
-
-  // =========================
-  // EDIT USER
-  // =========================
-
-  const handleEdit = (user) => {
-    console.log("EDIT CLICKED");
-    console.log("USER OBJECT:", user);
-
-    setEditUserId(user.userId);
-
-    setFormData({
-      fullName: user.fullName || "",
-      email: user.email || "",
-      password: "",
-      confirmPassword: "",
-      role: user.role || "User",
-    });
-
-    setShowForm(true);
   };
 
   // =========================
   // UPDATE USER
   // =========================
 
-  const handleUpdateUser = async (e) => {
-    e.preventDefault();
+  const handleUpdateUser = async (values, { resetForm, setFieldTouched }) => {
+    if (emailCheck.checking || emailCheck.exists) {
+      setFieldTouched("email", true);
+      return;
+    }
 
     try {
       const updateData = {
-        fullName: formData.fullName,
-        email: formData.email,
-        role: formData.role,
+        fullName: values.fullName,
+        email: values.email,
+        role: values.role,
       };
 
       console.log("Updating user:", editUserId);
@@ -144,19 +216,72 @@ function Users() {
 
       console.log("User updated:", response.data);
 
-      alert("User updated successfully!");
+      showToast("success", "User updated successfully!");
 
       resetForm();
+      setEditUserId(null);
+      setShowForm(false);
 
       await getUsers();
     } catch (error) {
       console.error("Failed to update user:", error);
 
-      alert(
-        error.response?.data?.message ||
-          "Failed to update user."
+      showToast(
+        "error",
+        error.response?.data?.message || "Failed to update user."
       );
     }
+  };
+
+  // =========================
+  // USER FORM (FORMIK)
+  // =========================
+
+  const userForm = useFormik({
+    initialValues: {
+      fullName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      role: "User",
+    },
+    validationSchema: editUserId ? editUserSchema : createUserSchema,
+    onSubmit: editUserId ? handleUpdateUser : handleCreateUser,
+  });
+
+  // =========================
+  // CLOSE / RESET USER FORM
+  // =========================
+
+  const closeForm = () => {
+    userForm.resetForm();
+    setEditUserId(null);
+    setShowForm(false);
+    resetEmailCheck();
+  };
+
+  // =========================
+  // EDIT USER
+  // =========================
+
+  const handleEdit = (user) => {
+    console.log("EDIT CLICKED");
+    console.log("USER OBJECT:", user);
+
+    setEditUserId(user.userId);
+
+    userForm.resetForm({
+      values: {
+        fullName: user.fullName || "",
+        email: user.email || "",
+        password: "",
+        confirmPassword: "",
+        role: user.role || "User",
+      },
+    });
+
+    setShowForm(true);
+    resetEmailCheck();
   };
 
   // =========================
@@ -172,15 +297,18 @@ function Users() {
         isActive: true,
       });
 
-      alert(`${user.fullName || user.email} activated successfully.`);
+      showToast(
+        "success",
+        `${user.fullName || user.email} activated successfully.`
+      );
 
       await getUsers();
     } catch (error) {
       console.error("Failed to activate user:", error);
 
-      alert(
-        error.response?.data?.message ||
-          "Failed to activate user."
+      showToast(
+        "error",
+        error.response?.data?.message || "Failed to activate user."
       );
     }
   };
@@ -189,23 +317,30 @@ function Users() {
   // DEACTIVATE USER
   // =========================
 
-  const handleDeactivate = async (user) => {
+  const handleDeactivateClick = (user) => {
     const loggedInUserId = localStorage.getItem("userId");
 
     if (String(user.userId) === String(loggedInUserId)) {
-      alert("You cannot deactivate your own account.");
+      showToast("error", "You cannot deactivate your own account.");
       return;
     }
 
-    const confirmDeactivate = window.confirm(
-      `Are you sure you want to deactivate ${
-        user.fullName || user.email
-      }?`
-    );
+    setConfirmDialog({ open: true, user });
+  };
 
-    if (!confirmDeactivate) {
+  const closeConfirmDialog = () => {
+    setConfirmDialog({ open: false, user: null });
+  };
+
+  const confirmDeactivateUser = async () => {
+    const user = confirmDialog.user;
+
+    if (!user) {
+      closeConfirmDialog();
       return;
     }
+
+    closeConfirmDialog();
 
     try {
       await api.put(`/User/${user.userId}`, {
@@ -215,7 +350,8 @@ function Users() {
         isActive: false,
       });
 
-      alert(
+      showToast(
+        "success",
         `${user.fullName || user.email} deactivated successfully.`
       );
 
@@ -223,116 +359,111 @@ function Users() {
     } catch (error) {
       console.error("Failed to deactivate user:", error);
 
-      alert(
-        error.response?.data?.message ||
-          "Failed to deactivate user."
+      showToast(
+        "error",
+        error.response?.data?.message || "Failed to deactivate user."
       );
     }
   };
 
   // =========================
-  // RESET USER FORM
+  // CHANGE PASSWORD VALIDATION SCHEMA
   // =========================
 
-  const resetForm = () => {
-    setFormData({
-      fullName: "",
-      email: "",
-      password: "",
+  const changePasswordSchema = Yup.object({
+    oldPassword: Yup.string().required("Current password is required"),
+    newPassword: Yup.string()
+      .min(6, "New password must be at least 6 characters")
+      .matches(/[A-Za-z]/, "New password must contain at least one letter")
+      .matches(/[0-9]/, "New password must contain at least one number")
+      .required("New password is required"),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("newPassword")], "Passwords do not match")
+      .required("Confirm password is required"),
+  });
+
+  // =========================
+  // CHANGE PASSWORD (FORMIK)
+  // =========================
+
+  const passwordForm = useFormik({
+    initialValues: {
+      oldPassword: "",
+      newPassword: "",
       confirmPassword: "",
-      role: "User",
-    });
+    },
+    validationSchema: changePasswordSchema,
+    onSubmit: async (values, { resetForm }) => {
+      setPasswordMessage("");
+      setPasswordError("");
 
-    setEditUserId(null);
-    setShowForm(false);
-  };
+      const userId = localStorage.getItem("userId");
 
-  // =========================
-  // CHANGE PASSWORD INPUT
-  // =========================
+      if (!userId) {
+        setPasswordError(
+          "User information not found. Please login again."
+        );
+        return;
+      }
 
-  const handlePasswordChange = (e) => {
-    const { name, value } = e.target;
-
-    setPasswordData({
-      ...passwordData,
-      [name]: value,
-    });
-  };
-
-  // =========================
-  // CHANGE PASSWORD
-  // =========================
-
-  const handleChangePassword = async (e) => {
-    e.preventDefault();
-
-    setPasswordMessage("");
-    setPasswordError("");
-
-    if (
-      passwordData.newPassword !==
-      passwordData.confirmPassword
-    ) {
-      setPasswordError(
-        "New password and confirm password do not match."
-      );
-      return;
-    }
-
-    if (passwordData.newPassword.length < 6) {
-      setPasswordError(
-        "New password must be at least 6 characters."
-      );
-      return;
-    }
-
-    const userId = localStorage.getItem("userId");
-
-    if (!userId) {
-      setPasswordError(
-        "User information not found. Please login again."
-      );
-      return;
-    }
-
-    try {
-      const response = await api.post(
-        `/Auth/change-password?userId=${userId}`,
-        {
-          oldPassword: passwordData.oldPassword,
-          newPassword: passwordData.newPassword,
-          confirmPassword: passwordData.confirmPassword,
-        }
-      );
-
-      if (response.data.success) {
-        setPasswordMessage(
-          "Password changed successfully."
+      try {
+        const response = await api.post(
+          `/Auth/change-password?userId=${userId}`,
+          {
+            oldPassword: values.oldPassword,
+            newPassword: values.newPassword,
+            confirmPassword: values.confirmPassword,
+          }
         );
 
-        setPasswordData({
-          oldPassword: "",
-          newPassword: "",
-          confirmPassword: "",
-        });
-      } else {
+        if (response.data.success) {
+          setPasswordMessage(
+            "Password changed successfully."
+          );
+
+          resetForm();
+        } else {
+          setPasswordError(
+            response.data.message ||
+              "Failed to change password."
+          );
+        }
+      } catch (error) {
+        console.error(
+          "Failed to change password:",
+          error
+        );
+
         setPasswordError(
-          response.data.message ||
+          error.response?.data?.message ||
             "Failed to change password."
         );
       }
-    } catch (error) {
-      console.error(
-        "Failed to change password:",
-        error
-      );
+    },
+  });
 
-      setPasswordError(
-        error.response?.data?.message ||
-          "Failed to change password."
-      );
+  // =========================
+  // PAGINATION DERIVED DATA
+  // =========================
+
+  const totalPages = Math.max(1, Math.ceil(users.length / usersPerPage));
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
     }
+  }, [users, currentPage, totalPages]);
+
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+
+  const startIndex = users.length === 0 ? 0 : indexOfFirstUser + 1;
+  const endIndex = Math.min(indexOfLastUser, users.length);
+
+  const handlePageChange = (page) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
   };
 
   // =========================
@@ -341,6 +472,68 @@ function Users() {
 
   return (
     <div className="users-page">
+
+      {/* =========================
+          TOAST NOTIFICATION
+      ========================= */}
+
+      {toast && (
+        <div className={`toast-notification ${toast.type}`}>
+          <span className="toast-message">{toast.message}</span>
+
+          <button
+            type="button"
+            className="toast-close"
+            onClick={() => setToast(null)}
+            aria-label="Dismiss notification"
+          >
+            &times;
+          </button>
+        </div>
+      )}
+
+      {/* =========================
+          DEACTIVATE CONFIRM DIALOG
+      ========================= */}
+
+      {confirmDialog.open && (
+        <div className="modal-overlay" onClick={closeConfirmDialog}>
+          <div
+            className="modal-card"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="modal-title">Deactivate User</h3>
+
+            <p className="modal-message">
+              Are you sure you want to deactivate{" "}
+              <strong>
+                {confirmDialog.user?.fullName ||
+                  confirmDialog.user?.email}
+              </strong>
+              ? They will lose access to their account until
+              reactivated.
+            </p>
+
+            <div className="modal-actions">
+              <button
+                type="button"
+                className="secondary-btn"
+                onClick={closeConfirmDialog}
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                className="deactivate-btn"
+                onClick={confirmDeactivateUser}
+              >
+                Deactivate
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* =========================
           PAGE HEADER
@@ -359,15 +552,18 @@ function Users() {
             onClick={() => {
               setEditUserId(null);
 
-              setFormData({
-                fullName: "",
-                email: "",
-                password: "",
-                confirmPassword: "",
-                role: "User",
+              userForm.resetForm({
+                values: {
+                  fullName: "",
+                  email: "",
+                  password: "",
+                  confirmPassword: "",
+                  role: "User",
+                },
               });
 
               setShowForm(true);
+              resetEmailCheck();
             }}
           >
             + Add User
@@ -393,11 +589,8 @@ function Users() {
 
           <form
             className="user-form"
-            onSubmit={
-              editUserId
-                ? handleUpdateUser
-                : handleCreateUser
-            }
+            onSubmit={userForm.handleSubmit}
+            noValidate
           >
 
             {/* Full Name */}
@@ -408,11 +601,16 @@ function Users() {
               <input
                 type="text"
                 name="fullName"
-                value={formData.fullName}
-                onChange={handleChange}
+                value={userForm.values.fullName}
+                onChange={userForm.handleChange}
+                onBlur={userForm.handleBlur}
                 placeholder="Enter full name"
-                required
+                className={showError(userForm, "fullName") ? "input-error" : ""}
               />
+
+              {showError(userForm, "fullName") && (
+                <div className="field-error">{userForm.errors.fullName}</div>
+              )}
             </div>
 
             {/* Email */}
@@ -420,14 +618,43 @@ function Users() {
             <div className="form-group">
               <label>Email</label>
 
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Enter email"
-                required
-              />
+              <div className="email-input-wrap">
+                <input
+                  type="email"
+                  name="email"
+                  value={userForm.values.email}
+                  onChange={(e) => {
+                    userForm.handleChange(e);
+                    checkEmailAvailability(e.target.value, editUserId);
+                  }}
+                  onBlur={userForm.handleBlur}
+                  placeholder="Enter email"
+                  className={
+                    showError(userForm, "email") || emailCheck.exists
+                      ? "input-error"
+                      : ""
+                  }
+                />
+
+                {emailCheck.checking && (
+                  <span className="email-check-spinner" aria-label="Checking email" />
+                )}
+
+                {!emailCheck.checking &&
+                  !showError(userForm, "email") &&
+                  !emailCheck.exists &&
+                  userForm.values.email.trim() && (
+                    <span className="email-check-ok">✓</span>
+                  )}
+              </div>
+
+              {showError(userForm, "email") ? (
+                <div className="field-error">{userForm.errors.email}</div>
+              ) : emailCheck.checking ? (
+                <div className="field-checking">Checking email availability…</div>
+              ) : emailCheck.exists ? (
+                <div className="field-error">This email is already registered.</div>
+              ) : null}
             </div>
 
             {/* Password - Only Create */}
@@ -440,11 +667,16 @@ function Users() {
                   <input
                     type="password"
                     name="password"
-                    value={formData.password}
-                    onChange={handleChange}
+                    value={userForm.values.password}
+                    onChange={userForm.handleChange}
+                    onBlur={userForm.handleBlur}
                     placeholder="Enter password"
-                    required
+                    className={showError(userForm, "password") ? "input-error" : ""}
                   />
+
+                  {showError(userForm, "password") && (
+                    <div className="field-error">{userForm.errors.password}</div>
+                  )}
                 </div>
 
                 <div className="form-group">
@@ -453,13 +685,16 @@ function Users() {
                   <input
                     type="password"
                     name="confirmPassword"
-                    value={
-                      formData.confirmPassword
-                    }
-                    onChange={handleChange}
+                    value={userForm.values.confirmPassword}
+                    onChange={userForm.handleChange}
+                    onBlur={userForm.handleBlur}
                     placeholder="Confirm password"
-                    required
+                    className={showError(userForm, "confirmPassword") ? "input-error" : ""}
                   />
+
+                  {showError(userForm, "confirmPassword") && (
+                    <div className="field-error">{userForm.errors.confirmPassword}</div>
+                  )}
                 </div>
               </>
             )}
@@ -471,8 +706,10 @@ function Users() {
 
               <select
                 name="role"
-                value={formData.role}
-                onChange={handleChange}
+                value={userForm.values.role}
+                onChange={userForm.handleChange}
+                onBlur={userForm.handleBlur}
+                className={showError(userForm, "role") ? "input-error" : ""}
               >
                 <option value="User">
                   User
@@ -486,6 +723,10 @@ function Users() {
                   Admin
                 </option>
               </select>
+
+              {showError(userForm, "role") && (
+                <div className="field-error">{userForm.errors.role}</div>
+              )}
             </div>
 
             {/* Form Buttons */}
@@ -504,7 +745,7 @@ function Users() {
               <button
                 type="button"
                 className="secondary-btn"
-                onClick={resetForm}
+                onClick={closeForm}
               >
                 Cancel
               </button>
@@ -546,7 +787,7 @@ function Users() {
                 </td>
               </tr>
             ) : (
-              users.map((user) => (
+              currentUsers.map((user) => (
                 <tr key={user.userId}>
 
                   {/* Name */}
@@ -608,7 +849,7 @@ function Users() {
                         <button
                           className="deactivate-btn"
                           onClick={() =>
-                            handleDeactivate(user)
+                            handleDeactivateClick(user)
                           }
                         >
                           Deactivate
@@ -636,6 +877,55 @@ function Users() {
 
         </table>
 
+        {/* =========================
+            PAGINATION (5 PER PAGE)
+        ========================= */}
+
+        {users.length > 0 && (
+          <div className="pagination">
+
+            <div className="pagination-info">
+              Showing {startIndex}-{endIndex} of {users.length} users
+            </div>
+
+            <div className="pagination-pages">
+
+              <button
+                type="button"
+                className="pagination-btn"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <button
+                  type="button"
+                  key={page}
+                  className={`pagination-page ${
+                    currentPage === page ? "active" : ""
+                  }`}
+                  onClick={() => handlePageChange(page)}
+                >
+                  {page}
+                </button>
+              ))}
+
+              <button
+                type="button"
+                className="pagination-btn"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </button>
+
+            </div>
+
+          </div>
+        )}
+
       </div>
 
       {/* =========================
@@ -653,7 +943,8 @@ function Users() {
 
         <form
           className="change-password-form"
-          onSubmit={handleChangePassword}
+          onSubmit={passwordForm.handleSubmit}
+          noValidate
         >
 
           <div className="password-fields">
@@ -664,13 +955,16 @@ function Users() {
               <input
                 type="password"
                 name="oldPassword"
-                value={
-                  passwordData.oldPassword
-                }
-                onChange={handlePasswordChange}
+                value={passwordForm.values.oldPassword}
+                onChange={passwordForm.handleChange}
+                onBlur={passwordForm.handleBlur}
                 placeholder="Enter current password"
-                required
+                className={showError(passwordForm, "oldPassword") ? "input-error" : ""}
               />
+
+              {showError(passwordForm, "oldPassword") && (
+                <div className="field-error">{passwordForm.errors.oldPassword}</div>
+              )}
             </div>
 
             <div className="form-group">
@@ -679,14 +973,16 @@ function Users() {
               <input
                 type="password"
                 name="newPassword"
-                value={
-                  passwordData.newPassword
-                }
-                onChange={handlePasswordChange}
+                value={passwordForm.values.newPassword}
+                onChange={passwordForm.handleChange}
+                onBlur={passwordForm.handleBlur}
                 placeholder="Enter new password"
-                minLength="6"
-                required
+                className={showError(passwordForm, "newPassword") ? "input-error" : ""}
               />
+
+              {showError(passwordForm, "newPassword") && (
+                <div className="field-error">{passwordForm.errors.newPassword}</div>
+              )}
             </div>
 
             <div className="form-group">
@@ -695,14 +991,16 @@ function Users() {
               <input
                 type="password"
                 name="confirmPassword"
-                value={
-                  passwordData.confirmPassword
-                }
-                onChange={handlePasswordChange}
+                value={passwordForm.values.confirmPassword}
+                onChange={passwordForm.handleChange}
+                onBlur={passwordForm.handleBlur}
                 placeholder="Confirm new password"
-                minLength="6"
-                required
+                className={showError(passwordForm, "confirmPassword") ? "input-error" : ""}
               />
+
+              {showError(passwordForm, "confirmPassword") && (
+                <div className="field-error">{passwordForm.errors.confirmPassword}</div>
+              )}
             </div>
 
           </div>

@@ -3,7 +3,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #f5f7fb;
+  background: linear-gradient(160deg, #145b53 0%, #0a2e2b 100%);
   padding: 20px;
 }
 
@@ -12,20 +12,20 @@
   max-width: 430px;
   background: #ffffff;
   padding: 35px;
-  border-radius: 12px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
 }
 
 .register-card h1 {
   margin: 0;
   text-align: center;
   font-size: 28px;
-  color: #222;
+  color: #163b40;
 }
 
 .register-card > p {
   text-align: center;
-  color: #777;
+  color: #6b7c80;
   margin: 8px 0 28px;
 }
 
@@ -37,13 +37,13 @@
   display: block;
   margin-bottom: 7px;
   font-weight: 600;
-  color: #333;
+  color: #163b40;
 }
 
 .form-group input {
   width: 100%;
   padding: 11px 12px;
-  border: 1px solid #d6d9df;
+  border: 1px solid #d6dfe0;
   border-radius: 7px;
   font-size: 14px;
   box-sizing: border-box;
@@ -51,7 +51,8 @@
 }
 
 .form-group input:focus {
-  border-color: #4f46e5;
+  border-color: #138a8a;
+  box-shadow: 0 0 0 2px rgba(19, 138, 138, 0.1);
 }
 
 .register-card button {
@@ -97,7 +98,7 @@
   text-align: center;
   margin-top: 20px;
   font-size: 14px;
-  color: #666;
+  color: #6b7c80;
 }
 
 .login-link span {
@@ -108,4 +109,105 @@
 
 .login-link span:hover {
   text-decoration: underline;
+}
+/* =========================
+   Field-level validation
+   (added to support Formik + Yup real-time validation;
+   existing rules above are untouched)
+   ========================= */
+
+.form-validation-summary {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 11px 15px;
+  margin-bottom: 16px;
+  background: #fff0f0;
+  border: 1px solid #f1c0c0;
+  border-radius: 8px;
+  color: #c21f1f;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.form-validation-summary-icon {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+}
+
+.form-group.has-error label {
+  color: #c21f1f;
+}
+
+.form-group.has-error input {
+  border-color: #e11d48;
+  background: #fff8f8;
+}
+
+.form-group.has-error input:focus {
+  box-shadow: 0 0 0 2px rgba(225, 29, 72, 0.12);
+}
+
+.form-group.is-valid input {
+  border-color: #1b8a5a;
+}
+
+.field-error {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+  color: #c21f1f;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.field-error-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* =========================
+   Password visibility toggle
+   ========================= */
+
+.password-input-wrapper {
+  position: relative;
+}
+
+.password-input-wrapper input {
+  padding-right: 42px;
+}
+
+.register-card button.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: #6b7c80;
+  font-size: 16px;
+  font-weight: normal;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.register-card button.password-toggle:hover {
+  color: #138a8a;
+  background: #f0f6f6;
+}
+
+.register-card button.password-toggle:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(19, 138, 138, 0.15);
 }

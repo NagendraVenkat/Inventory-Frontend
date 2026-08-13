@@ -97,41 +97,33 @@ function Products() {
     return () => clearTimeout(timer);
   }, [search, categoryId, currentPage]);
 
-  // ==================================================
-  // GET CATEGORIES
-  // ==================================================
-
   const loadCategories = async () => {
     try {
       const response = await getCategories();
 
-      if (response.data.success) {
-        setCategories(response.data.data);
-      }
+      // /Categories returns a paginated wrapper: { items, totalCount, page, ... }
+      const data = response.data;
+
+      setCategories(data?.items ?? []);
+
     } catch (error) {
-      console.error(
-        "Error loading categories:",
-        error
-      );
+      console.error("Failed to load categories:", error);
+      setCategories([]);
     }
   };
-
-  // ==================================================
-  // GET SUPPLIERS
-  // ==================================================
 
   const loadSuppliers = async () => {
     try {
       const response = await getSuppliers();
 
-      if (response.data.success) {
-        setSuppliers(response.data.data);
-      }
+      // /Suppliers returns a paginated wrapper: { items, totalCount, page, ... }
+      const data = response.data;
+
+      setSuppliers(data?.items ?? []);
+
     } catch (error) {
-      console.error(
-        "Error loading suppliers:",
-        error
-      );
+      console.error("Failed to load suppliers:", error);
+      setSuppliers([]);
     }
   };
 
@@ -165,7 +157,7 @@ function Products() {
 
         setError(
           response.data.message ||
-            "Failed to load products."
+          "Failed to load products."
         );
       }
     } catch (error) {
@@ -179,7 +171,7 @@ function Products() {
 
       setError(
         error.response?.data?.message ||
-          "Unable to load products."
+        "Unable to load products."
       );
     } finally {
       setLoading(false);
@@ -191,12 +183,12 @@ function Products() {
   // ==================================================
 
   const handleSelectProduct = (productId) => {
-  if (selectedProductId === productId) {
-    setSelectedProductId(null);
-  } else {
-    setSelectedProductId(productId);
-  }
-};
+    if (selectedProductId === productId) {
+      setSelectedProductId(null);
+    } else {
+      setSelectedProductId(productId);
+    }
+  };
 
   const handleClearSelection = () => {
     setSelectedProductId(null);
@@ -316,7 +308,7 @@ function Products() {
         } else {
           setActionError(
             backendMessage ||
-              "Unable to deactivate product."
+            "Unable to deactivate product."
           );
         }
 
@@ -353,7 +345,7 @@ function Products() {
       } else {
         setActionError(
           backendMessage ||
-            "Unable to deactivate product."
+          "Unable to deactivate product."
         );
       }
 
@@ -390,7 +382,7 @@ function Products() {
 
   return (
     <div className="products-page">
-    <h2 className="products-title">Product Management</h2>
+      <h2 className="products-title">Product Management</h2>
 
       {/* ------------------------------------------ */}
       {/* Success Message */}

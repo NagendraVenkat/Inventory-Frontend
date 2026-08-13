@@ -79,9 +79,9 @@ function Login() {
             HEADER
         ========================= */}
         <div className="login-header">
-          <h1>Inventory Manager</h1>
+          <h1>IM</h1>
 
-          <h2>Welcome Back</h2>
+          <h2>Inventory Manager</h2>
 
           <p>
             Login to manage your inventory

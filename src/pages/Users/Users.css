@@ -468,3 +468,291 @@
   }
 
 }
+
+
+/* =========================
+   EMAIL REAL-TIME CHECK
+========================= */
+
+.email-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.email-input-wrap input {
+  padding-right: 34px;
+}
+
+.email-check-spinner {
+  position: absolute;
+  right: 11px;
+  width: 15px;
+  height: 15px;
+  border: 2px solid #ccd8da;
+  border-top-color: #117b78;
+  border-radius: 50%;
+  animation: email-spin 0.6s linear infinite;
+}
+
+@keyframes email-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.email-check-ok {
+  position: absolute;
+  right: 11px;
+  color: #168047;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.field-checking {
+  margin-top: 1px;
+  color: #6d858b;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+
+/* =========================
+   FIELD VALIDATION
+========================= */
+
+.form-group input.input-error,
+.form-group select.input-error {
+  border-color: #dc3545;
+}
+
+.form-group input.input-error:focus,
+.form-group select.input-error:focus {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.12);
+}
+
+.field-error {
+  margin-top: 1px;
+  color: #c6283d;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+
+/* =========================
+   TOAST NOTIFICATION
+========================= */
+
+.toast-notification {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: 380px;
+  padding: 14px 16px;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  font-size: 14px;
+  font-weight: 600;
+  animation: toast-in 0.2s ease;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.toast-notification.success {
+  background: #d9f7e5;
+  color: #168047;
+  border: 1px solid #a9e6c3;
+}
+
+.toast-notification.error {
+  background: #fde0e3;
+  color: #c6283d;
+  border: 1px solid #f4b7bf;
+}
+
+.toast-message {
+  flex: 1;
+  line-height: 1.4;
+}
+
+.toast-close {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  opacity: 0.7;
+}
+
+.toast-close:hover {
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+
+  .toast-notification {
+    left: 16px;
+    right: 16px;
+    top: 16px;
+    max-width: none;
+  }
+
+}
+
+
+/* =========================
+   CONFIRM MODAL
+========================= */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(18, 63, 70, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  padding: 20px;
+  animation: modal-fade-in 0.15s ease;
+}
+
+@keyframes modal-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-card {
+  background: white;
+  border-radius: 12px;
+  padding: 26px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+  animation: modal-pop-in 0.18s ease;
+}
+
+@keyframes modal-pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modal-title {
+  margin: 0 0 12px;
+  font-size: 19px;
+  color: #123f46;
+}
+
+.modal-message {
+  margin: 0;
+  color: #38565c;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+
+/* =========================
+   PAGINATION
+========================= */
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid #e5ecec;
+}
+
+.pagination-info {
+  color: #6d858b;
+  font-size: 13px;
+}
+
+.pagination-pages {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.pagination-btn,
+.pagination-page {
+  background: white;
+  color: #38565c;
+  border: 1px solid #bdcbcd;
+  border-radius: 6px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pagination-page {
+  min-width: 34px;
+  padding: 7px 10px;
+  text-align: center;
+}
+
+.pagination-btn:hover:not(:disabled),
+.pagination-page:hover {
+  background: #f1f5f5;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-page.active {
+  background: #117b78;
+  color: white;
+  border-color: #117b78;
+}
+
+
+@media (max-width: 768px) {
+
+  .pagination {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+}
