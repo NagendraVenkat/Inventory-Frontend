@@ -4,19 +4,30 @@ import * as authService from "../services/authService";
 export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(localStorage.getItem("token"));
+  // Get token from localStorage when application starts
+  const [token, setToken] = useState(
+    localStorage.getItem("token")
+  );
 
-  const storedUser = localStorage.getItem("userId")
-  ? {
-      userId: localStorage.getItem("userId"),
+  // Get stored user information
+  const getStoredUser = () => {
+    const userId = localStorage.getItem("userId");
+
+    if (!userId) {
+      return null;
+    }
+
+    return {
+      userId: userId,
       fullName: localStorage.getItem("fullName"),
       email: localStorage.getItem("email"),
       role: localStorage.getItem("role"),
-    }
-  : null;
+    };
+  };
 
-const [user, setUser] = useState(storedUser);
+  const [user, setUser] = useState(getStoredUser);
 
+  // Keep token synchronized with localStorage
   useEffect(() => {
     if (token) {
       localStorage.setItem("token", token);
@@ -25,45 +36,76 @@ const [user, setUser] = useState(storedUser);
     }
   }, [token]);
 
+  // =========================
+  // LOGIN
+  // =========================
   const login = async (loginData) => {
-    const response = await authService.login(loginData);
+    try {
+      const response = await authService.login(loginData);
 
-    if (response.success) {
-      const data = response.data;
+      console.log("AuthContext Login Response:", response);
 
-      setToken(data.token);
+      if (response.success) {
+        const data = response.data;
 
-      const currentUser = {
-        userId: data.userId,
-        fullName: data.fullName,
-        email: data.email,
-        role: data.role,
-      };
+        // Save token in React state
+        setToken(data.token);
 
-      setUser(currentUser);
+        // Save token immediately in localStorage
+        localStorage.setItem("token", data.token);
 
-      localStorage.setItem("userId", data.userId);
-      localStorage.setItem("fullName", data.fullName);
-      localStorage.setItem("email", data.email);
-      localStorage.setItem("role", data.role);
+        // Create user object
+        const currentUser = {
+          userId: data.userId,
+          fullName: data.fullName,
+          email: data.email,
+          role: data.role,
+        };
+
+        // Save user in React state
+        setUser(currentUser);
+
+        // Save user information in localStorage
+        localStorage.setItem("userId", data.userId);
+        localStorage.setItem("fullName", data.fullName);
+        localStorage.setItem("email", data.email);
+        localStorage.setItem("role", data.role);
+
+        console.log("User saved:", currentUser);
+        console.log("Token saved:", data.token);
+
+        return response;
+      }
 
       return response;
-    }
+    } catch (error) {
+      console.error("AuthContext Login Error:", error);
 
-    return response;
+      throw error;
+    }
   };
 
+  // =========================
+  // LOGOUT
+  // =========================
   const logout = async () => {
-    await authService.logout();
+    try {
+      // Call backend logout API
+      await authService.logout();
+    } catch (error) {
+      console.error("Logout API Error:", error);
+    } finally {
+      // Clear React state
+      setToken(null);
+      setUser(null);
 
-    setToken(null);
-    setUser(null);
-
-    localStorage.removeItem("token");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("fullName");
-    localStorage.removeItem("email");
-    localStorage.removeItem("role");
+      // Clear localStorage
+      localStorage.removeItem("token");
+      localStorage.removeItem("userId");
+      localStorage.removeItem("fullName");
+      localStorage.removeItem("email");
+      localStorage.removeItem("role");
+    }
   };
 
   return (

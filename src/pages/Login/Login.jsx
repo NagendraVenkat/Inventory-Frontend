@@ -1,75 +1,83 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import useAuth from "../../hooks/useAuth";
-import { login } from "../../services/authService";
 import "./Login.css";
 
 function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
-
   const navigate = useNavigate();
-
   const { login } = useAuth();
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  const [showPassword, setShowPassword] = useState(false);
+  const [serverError, setServerError] = useState("");
 
-    try {
-      const response = await login({
-  email,
-  password,
-});
+  // =========================
+  // VALIDATION SCHEMA
+  // =========================
+  const validationSchema = Yup.object({
+    email: Yup.string()
+      .email("Please enter a valid email address")
+      .required("Email is required"),
 
-if (response.success) {
-  console.log("Login successful:", response);
+    password: Yup.string()
+      .required("Password is required")
+      .min(6, "Password must be at least 6 characters"),
+  });
 
-  setMessage("Login successful!");
+  // =========================
+  // FORMIK
+  // =========================
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
 
-  setTimeout(() => {
-    navigate("/dashboard");
-  }, 300);
-}
-      const data = await login(email, password);
+    validationSchema,
 
-      // Save login information
-      localStorage.setItem("token", data.data.token);
-      localStorage.setItem("userId", data.data.userId);
-      localStorage.setItem("fullName", data.data.fullName);
-      localStorage.setItem("email", data.data.email);
-      localStorage.setItem("role", data.data.role);
+    onSubmit: async (values, { setSubmitting }) => {
+      try {
+        setServerError("");
 
-      // Save complete user object
-      localStorage.setItem(
-        "user",
-        JSON.stringify(data.data)
-      );
+        const response = await login({
+          email: values.email,
+          password: values.password,
+        });
 
-      console.log("Login successful:", data);
+        console.log("Login successful:", response);
 
-      setMessage("Login successful!");
+        if (response.success) {
+          // Navigate to Dashboard
+          navigate("/dashboard", { replace: true });
+        } else {
+          setServerError(
+            response.message || "Login failed"
+          );
+        }
+      } catch (error) {
+        console.error("Login failed:", error);
 
-      // Go to Dashboard
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 300);
+        // Handle backend error
+        const errorMessage =
+          error.response?.data?.message ||
+          error.response?.data?.title ||
+          "Invalid email or password";
 
-    } catch (error) {
-      console.error("Login failed:", error);
-
-      setMessage(
-        error.response?.data?.message ||
-        "Invalid email or password"
-      );
-    }
-  };
+        setServerError(errorMessage);
+      } finally {
+        setSubmitting(false);
+      }
+    },
+  });
 
   return (
     <div className="login-page">
-
       <div className="login-card">
 
+        {/* =========================
+            HEADER
+        ========================= */}
         <div className="login-header">
           <h1>Inventory Manager</h1>
 
@@ -80,75 +88,152 @@ if (response.success) {
           </p>
         </div>
 
-        <form onSubmit={handleLogin}>
+        {/* =========================
+            SERVER ERROR
+        ========================= */}
+        {serverError && (
+          <div className="alert alert-danger">
+            <i className="bi bi-exclamation-circle me-2"></i>
+            {serverError}
+          </div>
+        )}
 
+        {/* =========================
+            LOGIN FORM
+        ========================= */}
+        <form onSubmit={formik.handleSubmit}>
+
+          {/* EMAIL */}
           <div className="login-form-group">
-            <label>Email</label>
+
+            <label htmlFor="email">
+              Email
+            </label>
 
             <input
+              id="email"
+              name="email"
               type="email"
-              value={email}
-              onChange={(e) =>
-                setEmail(e.target.value)
-              }
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               placeholder="Enter your email"
-              required
-            />
-          </div>
-
-          <div className="login-form-group">
-            <label>Password</label>
-
-            <input
-              type="password"
-              value={password}
-              onChange={(e) =>
-                setPassword(e.target.value)
+              autoComplete="email"
+              className={
+                formik.touched.email && formik.errors.email
+                  ? "input-error"
+                  : ""
               }
-              placeholder="Enter your password"
-              required
             />
+
+            {formik.touched.email && formik.errors.email && (
+              <div className="validation-error">
+                <i className="bi bi-exclamation-circle me-1"></i>
+                {formik.errors.email}
+              </div>
+            )}
+
           </div>
 
+          {/* PASSWORD */}
+          <div className="login-form-group">
+
+            <label htmlFor="password">
+              Password
+            </label>
+
+            <div className="password-input-wrapper">
+
+              <input
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                placeholder="Enter your password"
+                autoComplete="current-password"
+                className={
+                  formik.touched.password && formik.errors.password
+                    ? "input-error"
+                    : ""
+                }
+              />
+
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() =>
+                  setShowPassword((previous) => !previous)
+                }
+                aria-label={
+                  showPassword
+                    ? "Hide password"
+                    : "Show password"
+                }
+              >
+                <i
+                  className={
+                    showPassword
+                      ? "bi bi-eye-slash"
+                      : "bi bi-eye"
+                  }
+                ></i>
+              </button>
+
+            </div>
+
+            {formik.touched.password && formik.errors.password && (
+              <div className="validation-error">
+                <i className="bi bi-exclamation-circle me-1"></i>
+                {formik.errors.password}
+              </div>
+            )}
+
+          </div>
+
+          {/* LOGIN BUTTON */}
           <button
             className="login-button"
             type="submit"
+            disabled={formik.isSubmitting}
           >
-            Login
+            {formik.isSubmitting ? (
+              <>
+                <span
+                  className="spinner-border spinner-border-sm me-2"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+
+                Logging in...
+              </>
+            ) : (
+              <>
+                <i className="bi bi-box-arrow-in-right me-2"></i>
+                Login
+              </>
+            )}
           </button>
 
         </form>
 
-        {message && (
-          <p
-            className={
-              message === "Login successful!"
-                ? "login-success"
-                : "login-error"
-            }
-          >
-            {message}
-          </p>
-        )}
-
+        {/* =========================
+            REGISTER
+        ========================= */}
         <div className="register-link">
           Don't have an account?{" "}
+
           <span
-            onClick={() =>
-              navigate("/register")
-            }
+            onClick={() => navigate("/register")}
           >
             Register
           </span>
         </div>
 
       </div>
-
     </div>
   );
 }
 
 export default Login;
-
-
-

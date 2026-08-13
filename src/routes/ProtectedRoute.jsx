@@ -3,18 +3,15 @@ import useAuth from "../hooks/useAuth";
 
 function ProtectedRoute({ allowedRoles }) {
   const { token, user } = useAuth();
-  const role = user?.role;
 
-function ProtectedRoute({ allowedRoles }) {
-  const token = localStorage.getItem("token");
-  const role = localStorage.getItem("role");
+  const role = user?.role;
 
   // Not logged in
   if (!token) {
     return <Navigate to="/login" replace />;
   }
 
-  // Role not allowed
+  // User is logged in but does not have permission
   if (
     allowedRoles &&
     !allowedRoles.includes(role)
