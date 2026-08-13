@@ -97,6 +97,7 @@ function AppRoutes() {
 
           </Route>
         </Route>
+      </Routes>  
 
         {/* =========================
             DEFAULT ROUTE
