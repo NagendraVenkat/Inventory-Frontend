@@ -10,7 +10,7 @@ import Categories from "../pages/Categories/Categories";
 import Suppliers from "../pages/Suppliers/Suppliers";
 import StockIn from "../pages/StockIn/StockIn";
 import StockOut from "../pages/StockOut/StockOut";
-import Adjustment from "../pages/Adjustment/Adjustment";
+import Adjustment from "../pages/Adjustment/StockAdjustment";
 import Users from "../pages/Users/Users";
 import TransactionDetail from "../pages/TransactionDetail/TransactionDetail";
 
@@ -22,6 +22,28 @@ function AppRoutes() {
     <BrowserRouter>
 
       <Routes>
+        {/* Login - Public */}
+        <Route path="/login" element={<Login />} />
+
+        {/* Protected Pages */}
+        <Route element={<DashboardLayout />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+
+          <Route path="/products" element={<Products />} />
+
+          <Route path="/categories" element={<Categories />} />
+
+          <Route path="/suppliers" element={<Suppliers />} />
+
+          <Route path="/stockin" element={<StockIn />} />
+
+          <Route path="/stockout" element={<StockOut />} />
+
+          <Route path="/adjustment" element={<Adjustment />} />
+
+          <Route path="/users" element={<Users />} />
+
+          <Route path="/transactions/:id" element={<TransactionDetail />} />
 
         {/* =========================
             PUBLIC ROUTES

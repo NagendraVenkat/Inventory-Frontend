@@ -1,0 +1,51 @@
+:root {
+  --primary: #0f766e;
+  --sidebar: #132a2e;
+  --background: #f2f5f4;
+  --success: #15803d;
+  --warning: #b45309;
+  --danger: #b91c1c;
+  --text: #1c2b2a;
+  --text-secondary: #5c6b69;
+
+  --white: #ffffff;
+  --border: #e2e8e6;
+
+  --font-ui: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", Consolas, monospace;
+}
+
+/* =========================
+   GLOBAL
+========================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  color: var(--text);
+  background-color: var(--background);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
