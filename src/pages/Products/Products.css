@@ -54,14 +54,16 @@
 
 /* Table */
 .products-table-container { width: 100%; overflow-x: auto; }
-.products-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.products-table { width: 100%; min-width: 760px; border-collapse: collapse; table-layout: fixed; }
 
 .products-table th {
   height: 36px; padding: 0 10px; text-align: left; background: #f8fafb; border-bottom: 1px solid #dfe3e5;
   color: #066f6b; font-size: 12px; font-weight: 700; letter-spacing: .5px; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
 }
 .products-table td {
   height: 42px; padding: 0 10px; border-bottom: 1px solid #e7eaec; color: #1d2930; font-size: 13px; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
 }
 .products-table tbody tr:hover { background: #fafcfc; }
 .products-table tbody tr:last-child td { border-bottom: 0; }
