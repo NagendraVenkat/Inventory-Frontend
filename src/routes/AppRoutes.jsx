@@ -20,78 +20,43 @@ import ProtectedRoute from "./ProtectedRoute";
 function AppRoutes() {
   return (
     <BrowserRouter>
-
       <Routes>
-        {/* Login - Public */}
-        <Route path="/login" element={<Login />} />
-
-        {/* Protected Pages */}
-        <Route element={<DashboardLayout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-
-          <Route path="/products" element={<Products />} />
-
-          <Route path="/categories" element={<Categories />} />
-
-          <Route path="/suppliers" element={<Suppliers />} />
-
-          <Route path="/stockin" element={<StockIn />} />
-
-          <Route path="/stockout" element={<StockOut />} />
-
-          <Route path="/adjustment" element={<Adjustment />} />
-
-          <Route path="/users" element={<Users />} />
-
-          <Route path="/transactions/:id" element={<TransactionDetail />} />
-
         {/* =========================
             PUBLIC ROUTES
         ========================= */}
 
-        <Route
-          path="/login"
-          element={<Login />}
-        />
+        <Route path="/login" element={<Login />} />
 
-        <Route
-          path="/register"
-          element={<Register />}
-        />
-
+        <Route path="/register" element={<Register />} />
 
         {/* =========================
             PROTECTED APPLICATION
         ========================= */}
 
         <Route element={<ProtectedRoute />}>
-
           <Route element={<DashboardLayout />}>
-
+            
             {/* =========================
                 ADMIN + STAFF + USER
             ========================= */}
 
+            <Route path="/dashboard" element={<Dashboard />} />
+
+            <Route path="/products" element={<Products />} />
+
+            <Route path="/categories" element={<Categories />} />
+
+            <Route path="/suppliers" element={<Suppliers />} />
+
             <Route
-              path="/dashboard"
-              element={<Dashboard />}
+              path="/transactions/:id"
+              element={<TransactionDetail />}
             />
 
             <Route
-              path="/products"
-              element={<Products />}
+              path="/change-password"
+              element={<ChangePassword />}
             />
-
-            <Route
-              path="/categories"
-              element={<Categories />}
-            />
-
-            <Route
-              path="/suppliers"
-              element={<Suppliers />}
-            />
-
 
             {/* =========================
                 ADMIN + STAFF
@@ -99,24 +64,13 @@ function AppRoutes() {
 
             <Route
               element={
-                <ProtectedRoute
-                  allowedRoles={["Admin", "Staff"]}
-                />
+                <ProtectedRoute allowedRoles={["Admin", "Staff"]} />
               }
             >
+              <Route path="/stockin" element={<StockIn />} />
 
-              <Route
-                path="/stockin"
-                element={<StockIn />}
-              />
-
-              <Route
-                path="/stockout"
-                element={<StockOut />}
-              />
-
+              <Route path="/stockout" element={<StockOut />} />
             </Route>
-
 
             {/* =========================
                 ADMIN ONLY
@@ -124,12 +78,9 @@ function AppRoutes() {
 
             <Route
               element={
-                <ProtectedRoute
-                  allowedRoles={["Admin"]}
-                />
+                <ProtectedRoute allowedRoles={["Admin"]} />
               }
             >
-
               <Route
                 path="/adjustment"
                 element={<Adjustment />}
@@ -139,32 +90,13 @@ function AppRoutes() {
                 path="/users"
                 element={<Users />}
               />
-
             </Route>
 
-
-            {/* Transaction Detail
-                Admin + Staff + User */}
-            <Route
-              path="/transactions/:id"
-              element={<TransactionDetail />}
-            />
-
-
-            {/* Change Password
-                All logged-in users */}
-            <Route
-              path="/change-password"
-              element={<ChangePassword />}
-            />
-
           </Route>
-
         </Route>
 
-
         {/* =========================
-            DEFAULT
+            DEFAULT ROUTE
         ========================= */}
 
         <Route
@@ -172,8 +104,15 @@ function AppRoutes() {
           element={<Navigate to="/login" replace />}
         />
 
-      </Routes>
+        {/* =========================
+            OPTIONAL 404 REDIRECT
+        ========================= */}
 
+        <Route
+          path="*"
+          element={<Navigate to="/login" replace />}
+        />
+      </Routes>
     </BrowserRouter>
   );
 }
