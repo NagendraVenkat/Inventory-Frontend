@@ -1,0 +1,470 @@
+/* =========================
+   USERS PAGE
+========================= */
+
+.users-page {
+  padding: 28px;
+  background: #f4f7f7;
+  min-height: calc(100vh - 70px);
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+.users-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 28px;
+}
+
+.users-header h1 {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 700;
+  color: #123f46;
+}
+
+.users-header p {
+  margin: 6px 0 0;
+  color: #6d858b;
+  font-size: 14px;
+}
+
+
+/* =========================
+   ADD USER BUTTON
+========================= */
+
+.add-user-btn {
+  background: #117b78;
+  color: white;
+  border: none;
+  border-radius: 7px;
+  padding: 11px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.add-user-btn:hover {
+  background: #0d6966;
+}
+
+
+/* =========================
+   USER FORM
+========================= */
+
+.user-form-card {
+  background: white;
+  border: 1px solid #dce5e6;
+  border-radius: 12px;
+  padding: 25px;
+  margin-bottom: 25px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.form-header h2 {
+  margin: 0 0 22px;
+  font-size: 21px;
+  color: #123f46;
+}
+
+.user-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 24px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #38565c;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 11px 12px;
+  border: 1px solid #ccd8da;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  background: white;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #117b78;
+  box-shadow: 0 0 0 2px rgba(17, 123, 120, 0.1);
+}
+
+
+/* =========================
+   FORM BUTTONS
+========================= */
+
+.form-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.primary-btn {
+  background: #117b78;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.primary-btn:hover {
+  background: #0d6966;
+}
+
+.secondary-btn {
+  background: white;
+  color: #38565c;
+  border: 1px solid #bdcbcd;
+  border-radius: 6px;
+  padding: 10px 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.secondary-btn:hover {
+  background: #f1f5f5;
+}
+
+
+/* =========================
+   USERS TABLE
+========================= */
+
+.users-table-container {
+  background: white;
+  border: 1px solid #dce5e6;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.users-table-title {
+  margin: 0 0 18px;
+  font-size: 20px;
+  color: #123f46;
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.users-table th {
+  text-align: left;
+  background: #f4f7f7;
+  color: #567078;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 14px;
+  border-bottom: 1px solid #dce5e6;
+  text-transform: uppercase;
+}
+
+.users-table td {
+  padding: 15px 14px;
+  color: #29484f;
+  font-size: 14px;
+  border-bottom: 1px solid #e5ecec;
+}
+
+.users-table tbody tr:hover {
+  background: #fafcfc;
+}
+
+
+/* =========================
+   USER ACTIONS
+========================= */
+
+.user-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+
+/* =========================
+   EDIT BUTTON
+========================= */
+
+.edit-btn {
+  background: white;
+  color: #117b78;
+  border: 1px solid #117b78;
+  border-radius: 6px;
+  padding: 7px 15px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.edit-btn:hover {
+  background: #117b78;
+  color: white;
+}
+
+
+/* =========================
+   DEACTIVATE BUTTON
+========================= */
+
+.deactivate-btn {
+  background: white;
+  color: #dc3545;
+  border: 1px solid #dc3545;
+  border-radius: 6px;
+  padding: 7px 15px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.deactivate-btn:hover {
+  background: #dc3545;
+  color: white;
+}
+
+
+/* =========================
+   ACTIVATE BUTTON
+========================= */
+
+.activate-btn {
+  background: white;
+  color: #198754;
+  border: 1px solid #198754;
+  border-radius: 6px;
+  padding: 7px 15px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.activate-btn:hover {
+  background: #198754;
+  color: white;
+}
+
+
+/* =========================
+   STATUS BADGES
+========================= */
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 11px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+
+/* Active */
+
+.status-badge.active {
+  background: #d9f7e5;
+  color: #168047;
+}
+
+
+/* Inactive */
+
+.status-badge.inactive {
+  background: #fde0e3;
+  color: #c6283d;
+}
+
+
+/* =========================
+   ROLE BADGES
+========================= */
+
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 11px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+
+/* Admin */
+
+.role-badge.admin {
+  background: #d8f5e8;
+  color: #087443;
+}
+
+
+/* Staff */
+
+.role-badge.staff {
+  background: #fff0c7;
+  color: #b76a00;
+}
+
+
+/* User */
+
+.role-badge.user {
+  background: #e7eef0;
+  color: #4d666d;
+}
+
+
+/* =========================
+   CHANGE PASSWORD
+========================= */
+
+.change-password-card {
+  background: white;
+  border: 1px solid #dce5e6;
+  border-radius: 12px;
+  padding: 25px;
+  margin-top: 25px;
+  max-width: 850px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.change-password-header {
+  margin-bottom: 22px;
+}
+
+.change-password-header h2 {
+  margin: 0;
+  font-size: 20px;
+  color: #123f46;
+}
+
+.change-password-header p {
+  margin: 6px 0 0;
+  color: #6d858b;
+  font-size: 14px;
+}
+
+.change-password-form {
+  width: 100%;
+}
+
+.password-fields {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.password-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+
+/* =========================
+   PASSWORD MESSAGES
+========================= */
+
+.password-success {
+  margin-top: 15px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: #d9f7e5;
+  color: #168047;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.password-error {
+  margin-top: 15px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: #fde0e3;
+  color: #c6283d;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 900px) {
+
+  .password-fields {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+@media (max-width: 768px) {
+
+  .users-page {
+    padding: 18px;
+  }
+
+  .users-header {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .user-form {
+    grid-template-columns: 1fr;
+  }
+
+  .form-actions {
+    grid-column: auto;
+  }
+
+  .users-table-container {
+    overflow-x: auto;
+  }
+
+  .users-table {
+    min-width: 750px;
+  }
+
+  .change-password-card {
+    max-width: none;
+  }
+
+  .password-actions {
+    justify-content: flex-start;
+  }
+
+}
