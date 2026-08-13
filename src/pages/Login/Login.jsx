@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
 import { login } from "../../services/authService";
 import "./Login.css";
 
@@ -10,10 +11,26 @@ function Login() {
 
   const navigate = useNavigate();
 
+  const { login } = useAuth();
+
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
+      const response = await login({
+  email,
+  password,
+});
+
+if (response.success) {
+  console.log("Login successful:", response);
+
+  setMessage("Login successful!");
+
+  setTimeout(() => {
+    navigate("/dashboard");
+  }, 300);
+}
       const data = await login(email, password);
 
       // Save login information

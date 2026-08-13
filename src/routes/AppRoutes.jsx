@@ -20,10 +20,22 @@ import ProtectedRoute from "./ProtectedRoute";
 function AppRoutes() {
   return (
     <BrowserRouter>
+
       <Routes>
+
         {/* =========================
             PUBLIC ROUTES
         ========================= */}
+
+        <Route
+          path="/login"
+          element={<Login />}
+        />
+
+        <Route
+          path="/register"
+          element={<Register />}
+        />
 
         <Route path="/login" element={<Login />} />
 
@@ -34,11 +46,35 @@ function AppRoutes() {
         ========================= */}
 
         <Route element={<ProtectedRoute />}>
+
+          <Route element={<DashboardLayout />}>
+
           <Route element={<DashboardLayout />}>
             
             {/* =========================
                 ADMIN + STAFF + USER
             ========================= */}
+
+            <Route
+              path="/dashboard"
+              element={<Dashboard />}
+            />
+
+            <Route
+              path="/products"
+              element={<Products />}
+            />
+
+            <Route
+              path="/categories"
+              element={<Categories />}
+            />
+
+            <Route
+              path="/suppliers"
+              element={<Suppliers />}
+            />
+
 
             <Route path="/dashboard" element={<Dashboard />} />
 
@@ -64,6 +100,25 @@ function AppRoutes() {
 
             <Route
               element={
+                <ProtectedRoute
+                  allowedRoles={["Admin", "Staff"]}
+                />
+              }
+            >
+
+              <Route
+                path="/stockin"
+                element={<StockIn />}
+              />
+
+              <Route
+                path="/stockout"
+                element={<StockOut />}
+              />
+
+            </Route>
+
+
                 <ProtectedRoute allowedRoles={["Admin", "Staff"]} />
               }
             >
@@ -78,6 +133,12 @@ function AppRoutes() {
 
             <Route
               element={
+                <ProtectedRoute
+                  allowedRoles={["Admin"]}
+                />
+              }
+            >
+
                 <ProtectedRoute allowedRoles={["Admin"]} />
               }
             >
@@ -90,6 +151,43 @@ function AppRoutes() {
                 path="/users"
                 element={<Users />}
               />
+
+            </Route>
+
+
+            {/* Transaction Detail
+                Admin + Staff + User */}
+            <Route
+              path="/transactions/:id"
+              element={<TransactionDetail />}
+            />
+
+
+            {/* Change Password
+                All logged-in users */}
+            <Route
+              path="/change-password"
+              element={<ChangePassword />}
+            />
+
+          </Route>
+
+        </Route>
+
+
+        {/* =========================
+            DEFAULT
+        ========================= */}
+
+       <Route
+  path="/"
+  element={
+    localStorage.getItem("token")
+      ? <Navigate to="/dashboard" replace />
+      : <Navigate to="/login" replace />
+  }
+/>
+
             </Route>
 
           </Route>
@@ -113,6 +211,7 @@ function AppRoutes() {
           element={<Navigate to="/login" replace />}
         />
       </Routes>
+
     </BrowserRouter>
   );
 }

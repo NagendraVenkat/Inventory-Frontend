@@ -1,4 +1,9 @@
 import { Navigate, Outlet } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
+
+function ProtectedRoute({ allowedRoles }) {
+  const { token, user } = useAuth();
+  const role = user?.role;
 
 function ProtectedRoute({ allowedRoles }) {
   const token = localStorage.getItem("token");
