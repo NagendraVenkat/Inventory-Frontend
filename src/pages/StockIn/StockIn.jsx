@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import "./StockIn.css";
 
 import {
@@ -66,19 +67,64 @@ function StockIn() {
   };
 
   // =========================================================
+  // GET PURCHASE PRICE FROM SELECTED PRODUCT
+  // =========================================================
+
+  const getProductPurchasePrice = (productId) => {
+    const selectedProduct = products.find(
+      (product) => String(product.productId) === String(productId),
+    );
+
+    if (!selectedProduct) {
+      return "";
+    }
+
+    const purchasePrice =
+      selectedProduct.purchasePrice ??
+      selectedProduct.PurchasePrice ??
+      selectedProduct.purchase_price;
+
+    if (
+      purchasePrice === null ||
+      purchasePrice === undefined ||
+      purchasePrice === ""
+    ) {
+      return "";
+    }
+
+    return String(purchasePrice);
+  };
+
+  // =========================================================
   // UPDATE ITEM
   // =========================================================
 
   const updateItem = (index, field, value) => {
     setItems((currentItems) =>
-      currentItems.map((item, itemIndex) =>
-        itemIndex === index
-          ? {
-              ...item,
-              [field]: value,
-            }
-          : item,
-      ),
+      currentItems.map((item, itemIndex) => {
+        if (itemIndex !== index) {
+          return item;
+        }
+
+        if (field === "productId") {
+          const purchasePrice = getProductPurchasePrice(value);
+
+          return {
+            ...item,
+            productId: value,
+            unitPrice: purchasePrice,
+          };
+        }
+
+        if (field === "unitPrice") {
+          return item;
+        }
+
+        return {
+          ...item,
+          [field]: value,
+        };
+      }),
     );
 
     setErrors((currentErrors) => {
@@ -90,6 +136,17 @@ function StockIn() {
           [index]: {
             ...updatedErrors.items[index],
             [field]: "",
+          },
+        };
+      }
+
+      if (field === "productId" && updatedErrors.items?.[index]?.unitPrice) {
+        updatedErrors.items = {
+          ...updatedErrors.items,
+          [index]: {
+            ...updatedErrors.items[index],
+            productId: "",
+            unitPrice: "",
           },
         };
       }
@@ -125,7 +182,7 @@ function StockIn() {
     } else if (referenceNo.trim().length < 3) {
       validationErrors.referenceNo =
         "Reference / Invoice Number must contain at least 3 characters.";
-    } else if (!/^[A-Za-z0-9][A-Za-z0-9\/\-_]*$/.test(referenceNo.trim())) {
+    } else if (!/^[A-Za-z0-9][A-Za-z0-9/_-]*$/.test(referenceNo.trim())) {
       validationErrors.referenceNo =
         "Use letters, numbers, hyphen (-), underscore (_) or slash (/).";
     }
@@ -134,6 +191,7 @@ function StockIn() {
       validationErrors.transactionDate = "Transaction Date is required.";
     } else {
       const selectedDate = new Date(`${transactionDate}T00:00:00`);
+
       const today = new Date();
 
       today.setHours(0, 0, 0, 0);
@@ -165,7 +223,10 @@ function StockIn() {
         unitPrice: "",
       };
 
-      // Product
+      // -----------------------------------------------------
+      // PRODUCT
+      // -----------------------------------------------------
+
       if (!item.productId) {
         itemErrors.productId = "Please select a product.";
       } else {
@@ -177,7 +238,10 @@ function StockIn() {
         selectedProductIds.push(item.productId);
       }
 
-      // Quantity
+      // -----------------------------------------------------
+      // QUANTITY
+      // -----------------------------------------------------
+
       const quantity = Number(item.quantity);
 
       if (item.quantity === "") {
@@ -187,13 +251,19 @@ function StockIn() {
           "Quantity must be a whole number greater than zero.";
       }
 
-      // Unit Price
+      // -----------------------------------------------------
+      // UNIT PRICE
+      // -----------------------------------------------------
+
       const unitPrice = Number(item.unitPrice);
 
-      if (item.unitPrice === "") {
-        itemErrors.unitPrice = "Unit Price is required.";
+      if (!item.productId) {
+        itemErrors.unitPrice = "";
+      } else if (item.unitPrice === "") {
+        itemErrors.unitPrice =
+          "Purchase Price is not available for this product.";
       } else if (!Number.isFinite(unitPrice) || unitPrice <= 0) {
-        itemErrors.unitPrice = "Unit Price must be greater than zero.";
+        itemErrors.unitPrice = "Purchase Price must be greater than zero.";
       }
 
       validationErrors.items[index] = itemErrors;
@@ -287,8 +357,6 @@ function StockIn() {
   // =========================================================
 
   const removeRow = (index) => {
-    // If only one row exists,
-    // clear the row instead of deleting it.
     if (items.length === 1) {
       clearRow(index);
       return;
@@ -634,9 +702,7 @@ function StockIn() {
                   QTY <span className="required-star">*</span>
                 </th>
 
-                <th className="right-header">
-                  UNIT PRICE ₹ <span className="required-star">*</span>
-                </th>
+                <th className="right-header">UNIT PRICE ₹</th>
 
                 <th className="right-header">LINE TOTAL ₹</th>
 
@@ -717,19 +783,30 @@ function StockIn() {
                     {/* UNIT PRICE */}
 
                     <td>
-                      <input
-                        className={`stockin-number-input price-input ${
-                          itemErrors.unitPrice ? "stockin-invalid" : ""
-                        }`}
-                        type="number"
-                        min="0.01"
-                        step="0.01"
-                        value={item.unitPrice}
-                        onChange={(e) =>
-                          updateItem(index, "unitPrice", e.target.value)
-                        }
-                        placeholder="0.00"
-                      />
+                      <div className="stockin-price-wrapper">
+                        <input
+                          className={`stockin-number-input price-input stockin-fixed-price ${
+                            itemErrors.unitPrice ? "stockin-invalid" : ""
+                          }`}
+                          type="number"
+                          value={item.unitPrice}
+                          readOnly
+                          tabIndex={-1}
+                          placeholder="Auto"
+                          aria-label="Purchase Price"
+                        />
+
+                        {item.productId &&
+                          item.unitPrice &&
+                          !itemErrors.unitPrice && (
+                            <span
+                              className="stockin-price-lock"
+                              title="Purchase Price from Products"
+                            >
+                              <i className="bi bi-lock-fill"></i>
+                            </span>
+                          )}
+                      </div>
 
                       {itemErrors.unitPrice && (
                         <span className="validation-message table-validation">
@@ -746,27 +823,21 @@ function StockIn() {
                       </span>
                     </td>
 
-                    {/* =================================================
-                        ROW ACTIONS
-                        + ONLY ON FIRST / DEFAULT ROW
-                    ================================================= */}
+                    {/* ROW ACTIONS */}
 
                     <td className="action-cell">
                       <div className="row-actions">
-                        {/* PLUS ONLY FOR FIRST ROW */}
-
                         {index === 0 && (
                           <button
                             type="button"
                             className="add-row-icon-button"
                             onClick={addRow}
                             title="Add another row"
+                            disabled={saving}
                           >
                             +
                           </button>
                         )}
-
-                        {/* REMOVE / CLEAR */}
 
                         <button
                           type="button"
@@ -831,13 +902,11 @@ function StockIn() {
 
         {/* =====================================================
             SUCCESS MESSAGE
-            ABOVE SAVE BUTTONS
         ===================================================== */}
 
         {success && (
           <div className="stockin-success">
             <i className="bi bi-check-circle-fill"></i>
-
             <span>{success}</span>
           </div>
         )}

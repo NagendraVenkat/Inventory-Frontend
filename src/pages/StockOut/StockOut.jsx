@@ -157,7 +157,6 @@ function StockOut() {
             ...updatedErrors.items[index],
             productId: "",
             quantity: "",
-            unitPrice: "",
           },
         };
       }
@@ -182,7 +181,6 @@ function StockOut() {
 
     // -------------------------------------------------------
     // REFERENCE VALIDATION
-    // MANDATORY FIELD
     // -------------------------------------------------------
 
     const trimmedReferenceNo = referenceNo.trim();
@@ -199,7 +197,6 @@ function StockOut() {
 
     // -------------------------------------------------------
     // DATE VALIDATION
-    // MANDATORY FIELD
     // -------------------------------------------------------
 
     if (!transactionDate) {
@@ -225,7 +222,6 @@ function StockOut() {
       validationErrors.items[0] = {
         productId: "Please add at least one product.",
         quantity: "",
-        unitPrice: "",
       };
     }
 
@@ -235,7 +231,6 @@ function StockOut() {
       const itemErrors = {
         productId: "",
         quantity: "",
-        unitPrice: "",
       };
 
       // -----------------------------------------------------
@@ -283,14 +278,9 @@ function StockOut() {
       // -----------------------------------------------------
       // UNIT PRICE
       // -----------------------------------------------------
-
-      const unitPrice = Number(item.unitPrice);
-
-      if (item.unitPrice === "") {
-        itemErrors.unitPrice = "Unit Price is required.";
-      } else if (!Number.isFinite(unitPrice) || unitPrice <= 0) {
-        itemErrors.unitPrice = "Unit Price must be greater than zero.";
-      }
+      // No frontend validation is required here because
+      // Unit Price is automatically populated from the
+      // selected product's selling price and is read-only.
 
       validationErrors.items[index] = itemErrors;
     });
@@ -307,8 +297,7 @@ function StockOut() {
     // -------------------------------------------------------
 
     const hasItemErrors = Object.values(validationErrors.items).some(
-      (itemError) =>
-        itemError.productId || itemError.quantity || itemError.unitPrice,
+      (itemError) => itemError.productId || itemError.quantity,
     );
 
     if (!hasHeaderErrors && !hasItemErrors) {
@@ -323,17 +312,6 @@ function StockOut() {
   // =========================================================
 
   const addRow = () => {
-    /*
-      Validate the complete current form before adding
-      another row.
-
-      This means:
-      - Reference No is validated only if entered.
-      - Date is validated.
-      - Every existing item row is validated.
-      - Remarks is ignored because it is optional.
-    */
-
     const validationErrors = validateForm();
 
     if (validationErrors) {
@@ -342,8 +320,6 @@ function StockOut() {
       return;
     }
 
-    // Current rows are valid.
-    // Now add a new empty row.
     setItems((currentItems) => [
       ...currentItems,
       {
@@ -389,7 +365,6 @@ function StockOut() {
           [index]: {
             productId: "",
             quantity: "",
-            unitPrice: "",
           },
         };
       }
@@ -678,6 +653,7 @@ function StockOut() {
             <label>
               Issued To / Reference <span className="required-star">*</span>
             </label>
+
             <input
               type="text"
               className={errors.referenceNo ? "stockout-invalid" : ""}
@@ -764,9 +740,9 @@ function StockOut() {
                   QTY <span className="required-star">*</span>
                 </th>
 
-                <th className="right-header">
-                  UNIT PRICE ₹ <span className="required-star">*</span>
-                </th>
+                {/* UNIT PRICE - NO REQUIRED STAR */}
+
+                <th className="right-header">UNIT PRICE ₹</th>
 
                 <th className="right-header">LINE TOTAL ₹</th>
 
@@ -870,25 +846,24 @@ function StockOut() {
                     {/* UNIT PRICE */}
 
                     <td>
-                      <input
-                        className={`stockout-number-input price-input ${
-                          itemErrors.unitPrice ? "stockout-invalid" : ""
-                        }`}
-                        type="number"
-                        min="0.01"
-                        step="0.01"
-                        value={item.unitPrice}
-                        onChange={(e) =>
-                          updateItem(index, "unitPrice", e.target.value)
-                        }
-                        placeholder="0.00"
-                      />
+                      <div className="stockout-price-wrapper">
+                        <input
+                          className="stockout-number-input price-input stockout-fixed-price"
+                          type="number"
+                          value={item.unitPrice}
+                          readOnly
+                          tabIndex={-1}
+                          aria-readonly="true"
+                          placeholder="0.00"
+                        />
 
-                      {itemErrors.unitPrice && (
-                        <span className="validation-message table-validation">
-                          {itemErrors.unitPrice}
+                        <span
+                          className="stockout-price-lock"
+                          title="Selling price from product"
+                        >
+                          <i className="bi bi-lock-fill"></i>
                         </span>
-                      )}
+                      </div>
                     </td>
 
                     {/* LINE TOTAL */}
@@ -982,7 +957,6 @@ function StockOut() {
 
         {/* =====================================================
             SUCCESS MESSAGE
-            BETWEEN REMARKS AND BUTTONS
         ===================================================== */}
 
         {success && (

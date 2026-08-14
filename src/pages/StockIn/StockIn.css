@@ -156,7 +156,6 @@
   color: #dc2626;
 
   font-size: 12px;
-
   font-weight: 500;
 
   line-height: 1.4;
@@ -396,6 +395,61 @@
 }
 
 /* =========================================================
+   FIXED PURCHASE PRICE
+========================================================= */
+
+.stockin-price-wrapper {
+  position: relative;
+
+  width: 100%;
+}
+
+.stockin-fixed-price {
+  background-color: #f8faf9 !important;
+
+  color: var(--text) !important;
+
+  cursor: not-allowed;
+
+  padding-right: 34px;
+}
+
+.stockin-fixed-price:focus {
+  border-color: var(--border);
+
+  box-shadow: none;
+}
+
+.stockin-fixed-price[readonly] {
+  user-select: none;
+}
+
+/* =========================================================
+   PURCHASE PRICE LOCK ICON
+========================================================= */
+
+.stockin-price-lock {
+  position: absolute;
+
+  top: 50%;
+
+  right: 11px;
+
+  transform: translateY(-50%);
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  color: #7b8987;
+
+  font-size: 12px;
+
+  pointer-events: none;
+}
+
+/* =========================================================
    LINE TOTAL
 ========================================================= */
 
@@ -438,7 +492,6 @@
 
 /* =========================================================
    ADD ROW ICON
-   Only first/default row displays this button
 ========================================================= */
 
 .add-row-icon-button {
@@ -668,11 +721,6 @@
 
 /* =========================================================
    SUCCESS MESSAGE
-   IMPORTANT:
-   - Space above message
-   - Larger text
-   - Larger box
-   - Appears before action buttons
 ========================================================= */
 
 .stockin-success {
